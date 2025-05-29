@@ -1,0 +1,57 @@
+# ===================================
+# Task Management System - Backend Development Dockerfile
+# ===================================
+# Generated for TSK-007-ENV-backend-dockerfile
+# Project: Task Management System
+# Component: Backend API Server (Development)
+# Purpose: Optimized for development with hot reload and debugging
+
+FROM node:20.11.0-alpine AS development
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apk add --no-cache \
+    dumb-init \
+    curl \
+    git \
+    ca-certificates \
+    && rm -rf /var/cache/apk/*
+
+# Create non-root user for security
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S backend -u 1001 -G nodejs
+
+# Set development environment
+ENV NODE_ENV=development
+ENV PORT=8000
+ENV LOG_LEVEL=debug
+
+# Copy package files
+COPY package*.json ./
+COPY tsconfig*.json ./
+
+# Install all dependencies (including devDependencies)
+RUN npm ci --silent && \
+    npm cache clean --force
+
+# Copy source code
+COPY --chown=backend:nodejs . .
+
+# Create necessary directories
+RUN mkdir -p logs dist && \
+    chown -R backend:nodejs logs dist
+
+# Switch to non-root user
+USER backend
+
+# Expose development port and debugger port
+EXPOSE 8000 9229
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# Start development server with hot reload and debugging
+CMD ["dumb-init", "npm", "run", "dev:debug"]

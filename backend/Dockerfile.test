@@ -1,0 +1,58 @@
+# ===================================
+# Task Management System - Backend Test Dockerfile
+# ===================================
+# Generated for TSK-007-ENV-backend-dockerfile
+# Project: Task Management System
+# Component: Backend API Server (Test)
+# Purpose: Optimized for automated testing and CI/CD
+
+FROM node:20.11.0-alpine AS test
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apk add --no-cache \
+    dumb-init \
+    curl \
+    ca-certificates \
+    && rm -rf /var/cache/apk/*
+
+# Create non-root user for security
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S backend -u 1001 -G nodejs
+
+# Set test environment
+ENV NODE_ENV=test
+ENV PORT=8001
+ENV LOG_LEVEL=error
+ENV CI=true
+
+# Copy package files
+COPY package*.json ./
+COPY tsconfig*.json ./
+COPY jest.config.js ./
+
+# Install all dependencies (including devDependencies for testing)
+RUN npm ci --silent && \
+    npm cache clean --force
+
+# Copy source code
+COPY --chown=backend:nodejs . .
+
+# Create test directories
+RUN mkdir -p logs coverage test-results && \
+    chown -R backend:nodejs logs coverage test-results
+
+# Switch to non-root user
+USER backend
+
+# Expose test port
+EXPOSE 8001
+
+# Health check for test environment
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8001/health || exit 1
+
+# Run tests with coverage
+CMD ["dumb-init", "npm", "run", "test:ci"]
