@@ -1,0 +1,157 @@
+// ===================================
+// Task Management System - Prisma Schema
+// ===================================
+// Generated for TSK-011-ENV-prisma-schema
+// Project: Task Management System
+// Component: Database Schema Definition
+// Purpose: Define database models, relationships, and constraints
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ===================================
+// Enums
+// ===================================
+
+/// User role enumeration
+enum UserRole {
+  user  @map("user")
+  admin @map("admin")
+
+  @@map("user_role")
+}
+
+/// Task priority enumeration
+enum TaskPriority {
+  high   @map("high")
+  medium @map("medium")
+  low    @map("low")
+
+  @@map("task_priority")
+}
+
+/// Task status enumeration
+enum TaskStatus {
+  pending     @map("pending")
+  in_progress @map("in_progress")
+  completed   @map("completed")
+
+  @@map("task_status")
+}
+
+// ===================================
+// Models
+// ===================================
+
+/// User model for authentication and authorization
+model User {
+  // Primary key
+  id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+
+  // User information
+  username     String  @db.VarChar(50)
+  email        String  @unique @db.VarChar(255)
+  passwordHash String  @map("password_hash") @db.VarChar(255)
+  role         UserRole @default(user)
+  isActive     Boolean @default(true) @map("is_active")
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  // Relationships
+  tasks Task[]
+
+  // Constraints and indexes
+  @@index([email], name: "idx_user_email")
+  @@index([username], name: "idx_user_username")
+  @@index([role], name: "idx_user_role")
+  @@index([isActive], name: "idx_user_is_active")
+  @@index([createdAt], name: "idx_user_created_at")
+  @@map("users")
+}
+
+/// Task model for task management
+model Task {
+  // Primary key
+  id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+
+  // Foreign key
+  userId String @map("user_id") @db.Uuid
+
+  // Task information
+  title       String      @db.VarChar(100)
+  description String?     @db.Text
+  priority    TaskPriority @default(medium)
+  status      TaskStatus  @default(pending)
+  dueDate     DateTime?   @map("due_date") @db.Timestamp(6)
+  completedAt DateTime?   @map("completed_at") @db.Timestamp(6)
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  // Relationships
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taskCategories TaskCategory[]
+
+  // Constraints and indexes
+  @@index([userId], name: "idx_task_user_id")
+  @@index([priority], name: "idx_task_priority")
+  @@index([status], name: "idx_task_status")
+  @@index([dueDate], name: "idx_task_due_date")
+  @@index([createdAt], name: "idx_task_created_at")
+  @@index([userId, status], name: "idx_task_user_status")
+  @@index([userId, priority], name: "idx_task_user_priority")
+  @@index([userId, dueDate], name: "idx_task_user_due_date")
+  @@map("tasks")
+}
+
+/// Category model for task categorization
+model Category {
+  // Primary key
+  id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+
+  // Category information
+  name        String  @unique @db.VarChar(50)
+  color       String  @db.VarChar(7) // Hex color code (#RRGGBB)
+  description String? @db.Text
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  // Relationships
+  taskCategories TaskCategory[]
+
+  // Constraints and indexes
+  @@index([name], name: "idx_category_name")
+  @@index([createdAt], name: "idx_category_created_at")
+  @@map("categories")
+}
+
+/// TaskCategory model for many-to-many relationship between Task and Category
+model TaskCategory {
+  // Composite primary key
+  taskId     String @map("task_id") @db.Uuid
+  categoryId String @map("category_id") @db.Uuid
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  // Relationships
+  task     Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  // Constraints and indexes
+  @@id([taskId, categoryId])
+  @@index([taskId], name: "idx_task_category_task")
+  @@index([categoryId], name: "idx_task_category_category")
+  @@map("task_categories")
+}
