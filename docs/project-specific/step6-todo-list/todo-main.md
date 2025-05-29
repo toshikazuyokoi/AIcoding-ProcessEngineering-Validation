@@ -47,10 +47,10 @@
 
 ### 進捗の可視化
 ```text
-全体進捗: [█████████████] 14.6% (13/89タスク完了)
+全体進捗: [██████████████] 15.7% (14/89タスク完了)
 
 Phase別進捗:
-- Phase 0: [█████████████] 46.4% (13/28タスク完了) - 環境セットアップ
+- Phase 0: [██████████████] 50.0% (14/28タスク完了) - 環境セットアップ
 - Phase 1: [░░░░░░░░░░] 0% (0/20タスク完了) - Infrastructure Layer
 - Phase 2: [░░░░░░░░░░] 0% (0/15タスク完了) - Domain Layer
 - Phase 3: [░░░░░░░░░░] 0% (0/12タスク完了) - Application Layer
@@ -59,7 +59,7 @@ Phase別進捗:
 
 ### Phase別概要
 
-## Phase 0: 環境セットアップ [█████████████] 46.4% (13/28タスク完了)
+## Phase 0: 環境セットアップ [██████████████] 50.0% (14/28タスク完了)
 
 ### 0.1 基本環境設定（3タスク）
 - [x] **基本ファイル**: .gitignore ✅, README.md ✅, Makefile ✅
@@ -68,7 +68,7 @@ Phase別進捗:
 - [x] **Docker設定**: docker-compose.dev.yml ✅, docker-compose.test.yml ✅, docker-compose.yml ✅, backend/Dockerfile ✅, backend/.dockerignore ✅, frontend/Dockerfile ✅, frontend/.dockerignore ✅
 
 ### 0.3 データベース・インフラ設定（6タスク）
-- [x] **DB・インフラ**: Prisma ✅, PostgreSQL Dockerfile ✅, PostgreSQL init ✅, Redis, Nginx
+- [x] **DB・インフラ**: Prisma ✅, PostgreSQL Dockerfile ✅, PostgreSQL init ✅, Redis config ✅, Nginx
 
 ### 0.4 CI/CD・ワークフロー（3タスク）
 - [ ] **CI/CD**: GitHub Actions ワークフロー
