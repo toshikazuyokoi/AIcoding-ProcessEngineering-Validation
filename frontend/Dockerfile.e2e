@@ -1,0 +1,58 @@
+# ===================================
+# Task Management System - Frontend E2E Test Dockerfile
+# ===================================
+# Generated for TSK-009-ENV-frontend-dockerfile
+# Project: Task Management System
+# Component: Frontend React Application (E2E Test)
+# Purpose: Optimized for E2E testing with Playwright
+
+FROM mcr.microsoft.com/playwright:v1.40.0-focal AS e2e
+
+# Set working directory
+WORKDIR /app
+
+# Install Node.js 20.11.0
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs=20.11.0-1nodesource1
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    ca-certificates \
+    dumb-init \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user for security
+RUN groupadd -g 1001 nodejs && \
+    useradd -r -u 1001 -g nodejs frontend
+
+# Set E2E test environment
+ENV NODE_ENV=test
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+ENV HEADLESS=true
+ENV TIMEOUT=60000
+
+# Copy package files
+COPY package*.json ./
+COPY tsconfig*.json ./
+COPY playwright.config.ts ./
+
+# Install dependencies
+RUN npm ci --silent && \
+    npm cache clean --force
+
+# Install Playwright browsers
+RUN npx playwright install --with-deps
+
+# Copy source code
+COPY --chown=frontend:nodejs . .
+
+# Create E2E test directories
+RUN mkdir -p test-results playwright-report && \
+    chown -R frontend:nodejs test-results playwright-report
+
+# Switch to non-root user
+USER frontend
+
+# Run E2E tests
+CMD ["dumb-init", "npm", "run", "test:e2e:ci"]
