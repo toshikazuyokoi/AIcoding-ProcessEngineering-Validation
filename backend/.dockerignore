@@ -1,0 +1,330 @@
+# ===================================
+# Task Management System - Backend .dockerignore
+# ===================================
+# Generated for TSK-008-ENV-backend-dockerignore
+# Project: Task Management System
+# Component: Backend API Server
+# Purpose: Optimize Docker build performance and security
+
+# ===================================
+# Node.js & npm
+# ===================================
+# Dependencies (will be installed in container)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn/
+.pnp.*
+
+# Package lock files (keep package-lock.json for reproducible builds)
+yarn.lock
+pnpm-lock.yaml
+
+# ===================================
+# Build & Distribution
+# ===================================
+# Build outputs (will be generated in container)
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# Coverage reports
+coverage/
+.nyc_output/
+*.lcov
+
+# ===================================
+# Development & Testing
+# ===================================
+# Test files and directories
+__tests__/
+**/*.test.ts
+**/*.test.js
+**/*.spec.ts
+**/*.spec.js
+test/
+tests/
+*.test.*
+*.spec.*
+
+# Test results and artifacts
+test-results/
+junit.xml
+test-report.html
+playwright-report/
+test-output/
+
+# Development tools
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ===================================
+# Logs & Runtime
+# ===================================
+# Log files
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# ===================================
+# Environment & Configuration
+# ===================================
+# Environment files (security)
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.*.local
+
+# Configuration files
+.eslintcache
+.stylelintcache
+
+# ===================================
+# Git & Version Control
+# ===================================
+.git/
+.gitignore
+.gitattributes
+.gitmodules
+
+# ===================================
+# Documentation
+# ===================================
+# Documentation files
+README.md
+CHANGELOG.md
+LICENSE
+*.md
+docs/
+documentation/
+
+# ===================================
+# Docker & Infrastructure
+# ===================================
+# Docker files (except the ones being used)
+Dockerfile.dev
+Dockerfile.test
+.dockerignore
+docker-compose*.yml
+
+# Infrastructure files
+.github/
+.gitlab-ci.yml
+.travis.yml
+.circleci/
+azure-pipelines.yml
+Jenkinsfile
+
+# ===================================
+# Database & Migrations
+# ===================================
+# Database files
+*.sqlite
+*.sqlite3
+*.db
+
+# Migration files (keep for production)
+# migrations/
+
+# ===================================
+# Temporary & Cache Files
+# ===================================
+# Temporary files
+tmp/
+temp/
+.tmp/
+.temp/
+
+# Cache directories
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+.vuepress/dist/
+
+# ===================================
+# OS & Editor Files
+# ===================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+
+# ===================================
+# Security & Sensitive Files
+# ===================================
+# SSL certificates
+*.pem
+*.key
+*.crt
+*.csr
+*.p12
+*.pfx
+
+# SSH keys
+id_rsa
+id_dsa
+id_ecdsa
+id_ed25519
+*.pub
+
+# ===================================
+# Backup & Archive Files
+# ===================================
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+*.save
+
+# Archive files
+*.tar
+*.tar.gz
+*.tgz
+*.zip
+*.rar
+*.7z
+
+# ===================================
+# IDE & Editor Specific
+# ===================================
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+.vimrc.local
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# ===================================
+# Monitoring & Analytics
+# ===================================
+# Monitoring files
+newrelic.js
+.newrelic.yml
+
+# Analytics
+.vercel/
+.netlify/
+
+# ===================================
+# Package Manager Specific
+# ===================================
+# npm
+.npm/
+.npmrc
+
+# Yarn
+.yarn/
+.yarnrc
+.yarnrc.yml
+
+# pnpm
+.pnpm-store/
+.pnpmfile.cjs
+
+# ===================================
+# TypeScript Specific
+# ===================================
+# TypeScript cache
+*.tsbuildinfo
+
+# TypeScript declaration maps
+*.d.ts.map
+
+# ===================================
+# Linting & Formatting
+# ===================================
+# ESLint
+.eslintcache
+
+# Prettier
+.prettierignore
+
+# StyleLint
+.stylelintcache
+
+# ===================================
+# Performance & Profiling
+# ===================================
+# Performance files
+*.cpuprofile
+*.heapprofile
+*.heapsnapshot
+
+# Profiling
+profile/
+profiles/
+
+# ===================================
+# Custom Application Files
+# ===================================
+# Application specific excludes
+uploads/
+public/uploads/
+storage/
+files/
+
+# Development seeds
+seeds/
+fixtures/
+
+# ===================================
+# End of .dockerignore
+# ===================================
