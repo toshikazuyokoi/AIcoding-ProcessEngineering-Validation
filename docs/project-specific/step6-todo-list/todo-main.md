@@ -47,10 +47,10 @@
 
 ### 進捗の可視化
 ```text
-全体進捗: [██████░░░░] 6.7% (6/89タスク完了)
+全体進捗: [███████░░░] 7.9% (7/89タスク完了)
 
 Phase別進捗:
-- Phase 0: [██████░░░░] 21.4% (6/28タスク完了) - 環境セットアップ
+- Phase 0: [███████░░░] 25.0% (7/28タスク完了) - 環境セットアップ
 - Phase 1: [░░░░░░░░░░] 0% (0/20タスク完了) - Infrastructure Layer
 - Phase 2: [░░░░░░░░░░] 0% (0/15タスク完了) - Domain Layer
 - Phase 3: [░░░░░░░░░░] 0% (0/12タスク完了) - Application Layer
@@ -59,13 +59,13 @@ Phase別進捗:
 
 ### Phase別概要
 
-## Phase 0: 環境セットアップ [██████░░░░] 21.4% (6/28タスク完了)
+## Phase 0: 環境セットアップ [███████░░░] 25.0% (7/28タスク完了)
 
 ### 0.1 基本環境設定（3タスク）
 - [x] **基本ファイル**: .gitignore ✅, README.md ✅, Makefile ✅
 
 ### 0.2 Docker環境（7タスク）
-- [x] **Docker設定**: docker-compose.dev.yml ✅, docker-compose.test.yml ✅, docker-compose.yml ✅, Dockerfile群
+- [x] **Docker設定**: docker-compose.dev.yml ✅, docker-compose.test.yml ✅, docker-compose.yml ✅, backend/Dockerfile ✅
 
 ### 0.3 データベース・インフラ設定（6タスク）
 - [ ] **DB・インフラ**: Prisma, PostgreSQL, Redis, Nginx
