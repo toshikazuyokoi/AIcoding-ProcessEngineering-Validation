@@ -281,14 +281,14 @@ Phase 0「環境セットアップ」の詳細ToDoリストです。Docker環境
   - [x] Issueクローズ
 
 ### 0.5.2 Linux専用スクリプト
-- [ ] **TSK-024-SCR-setup-linux**: scripts/linux/setup-dev.sh作成・検証
-  - [ ] 仕様確認・設計理解
-  - [ ] コーディング
-  - [ ] テストコーディング
-  - [ ] 単体テスト実行
-  - [ ] リポジトリコミット
-  - [ ] ToDoチェック
-  - [ ] Issueクローズ
+- [x] **TSK-024-SCR-setup-linux**: scripts/linux/setup-dev.sh作成・検証 ✅ **完了**
+  - [x] 仕様確認・設計理解
+  - [x] コーディング
+  - [x] テストコーディング
+  - [x] 単体テスト実行
+  - [x] リポジトリコミット
+  - [x] ToDoチェック
+  - [x] Issueクローズ
 
 - [ ] **TSK-025-SCR-test-linux**: scripts/linux/run-tests.sh作成・検証
   - [ ] 仕様確認・設計理解
