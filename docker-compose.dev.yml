@@ -1,0 +1,257 @@
+# ===================================
+# Task Management System - Development Environment
+# ===================================
+# Generated for TSK-004-ENV-docker-compose-dev
+# Project: Task Management System
+# Environment: Development
+# Purpose: Local development with hot reload, debugging, and development tools
+
+version: '3.8'
+
+# ===================================
+# Networks
+# ===================================
+networks:
+  task-management-dev:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+# ===================================
+# Volumes
+# ===================================
+volumes:
+  postgres_dev_data:
+    driver: local
+  redis_dev_data:
+    driver: local
+  node_modules_backend:
+    driver: local
+  node_modules_frontend:
+    driver: local
+
+# ===================================
+# Services
+# ===================================
+services:
+  # ===================================
+  # Database Services
+  # ===================================
+  postgres:
+    image: postgres:16.1-alpine
+    container_name: task-management-postgres-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: taskdb_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: dev_password_123
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --locale=C"
+      TZ: Asia/Tokyo
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+      - ./infrastructure/docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      task-management-dev:
+        ipv4_address: 172.20.0.10
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d taskdb_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  redis:
+    image: redis:7.2.4-alpine
+    container_name: task-management-redis-dev
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Tokyo
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_dev_data:/data
+      - ./infrastructure/docker/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    command: redis-server /usr/local/etc/redis/redis.conf
+    networks:
+      task-management-dev:
+        ipv4_address: 172.20.0.11
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ===================================
+  # Backend Service (Development)
+  # ===================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+      target: development
+    container_name: task-management-backend-dev
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://postgres:dev_password_123@postgres:5432/taskdb_dev
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: dev_jwt_secret_key_for_development_only
+      JWT_EXPIRES_IN: 24h
+      CORS_ORIGIN: http://localhost:3000
+      PORT: 8000
+      LOG_LEVEL: debug
+      TZ: Asia/Tokyo
+    ports:
+      - "8000:8000"
+      - "9229:9229"  # Node.js debugger port
+    volumes:
+      - ./backend:/app
+      - node_modules_backend:/app/node_modules
+      - /app/dist  # Exclude dist directory
+    working_dir: /app
+    command: npm run dev:debug
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      task-management-dev:
+        ipv4_address: 172.20.0.20
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ===================================
+  # Frontend Service (Development)
+  # ===================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+      target: development
+    container_name: task-management-frontend-dev
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      REACT_APP_API_URL: http://localhost:8000
+      REACT_APP_WS_URL: ws://localhost:8000
+      CHOKIDAR_USEPOLLING: true
+      WATCHPACK_POLLING: true
+      FAST_REFRESH: true
+      TZ: Asia/Tokyo
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - node_modules_frontend:/app/node_modules
+      - /app/build  # Exclude build directory
+    working_dir: /app
+    command: npm run dev
+    depends_on:
+      - backend
+    networks:
+      task-management-dev:
+        ipv4_address: 172.20.0.30
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ===================================
+  # Development Tools
+  # ===================================
+  adminer:
+    image: adminer:4.8.1
+    container_name: task-management-adminer-dev
+    restart: unless-stopped
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+      ADMINER_DESIGN: pepa-linha
+      TZ: Asia/Tokyo
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      task-management-dev:
+        ipv4_address: 172.20.0.40
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: task-management-redis-commander-dev
+    restart: unless-stopped
+    environment:
+      REDIS_HOSTS: local:redis:6379
+      HTTP_USER: admin
+      HTTP_PASSWORD: dev_redis_admin_123
+      TZ: Asia/Tokyo
+    ports:
+      - "8081:8081"
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      task-management-dev:
+        ipv4_address: 172.20.0.41
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ===================================
+  # Monitoring & Logging (Development)
+  # ===================================
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    container_name: task-management-mailhog-dev
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Tokyo
+    ports:
+      - "1025:1025"  # SMTP port
+      - "8025:8025"  # Web UI port
+    networks:
+      task-management-dev:
+        ipv4_address: 172.20.0.50
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
