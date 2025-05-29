@@ -169,23 +169,14 @@ Phase 0「環境セットアップ」の詳細ToDoリストです。Docker環境
   - [x] ToDoチェック
   - [x] Issueクローズ
 
-- [ ] **TSK-015-INF-nginx-dockerfile**: infrastructure/docker/nginx/Dockerfile作成・検証
-  - [ ] 仕様確認・設計理解
-  - [ ] コーディング
-  - [ ] テストコーディング
-  - [ ] 単体テスト実行
-  - [ ] リポジトリコミット
-  - [ ] ToDoチェック
-  - [ ] Issueクローズ
-
-- [ ] **TSK-015-INF-nginx-dockerfile**: infrastructure/docker/nginx/Dockerfile作成・検証
-  - [ ] 仕様確認・設計理解
-  - [ ] コーディング
-  - [ ] テストコーディング
-  - [ ] 単体テスト実行
-  - [ ] リポジトリコミット
-  - [ ] ToDoチェック
-  - [ ] Issueクローズ
+- [x] **TSK-015-INF-nginx-dockerfile**: infrastructure/docker/nginx/Dockerfile作成・検証 ✅ **完了**
+  - [x] 仕様確認・設計理解
+  - [x] コーディング
+  - [x] テストコーディング
+  - [x] 単体テスト実行
+  - [x] リポジトリコミット
+  - [x] ToDoチェック
+  - [x] Issueクローズ
 
 - [x] **TSK-016-INF-nginx-config**: infrastructure/docker/nginx/nginx.conf作成・検証 ✅ **完了**
   - [x] 仕様確認・設計理解
@@ -201,93 +192,93 @@ Phase 0「環境セットアップ」の詳細ToDoリストです。Docker環境
 ## 0.4 CI/CD・ワークフロー [░░░░░░░░░░] 0% (0/3タスク完了)
 
 ### 0.4.1 GitHub Actions設定
-- [ ] **TSK-017-ENV-ci-workflow**: .github/workflows/ci.yml作成・検証
-  - [ ] 仕様確認・設計理解
-    - [ ] CI/CDパイプラインの設計確認
-    - [ ] テスト戦略の理解
-    - [ ] デプロイ戦略の確認
-    - [ ] セキュリティ要件の理解
-  - [ ] コーディング
-    - [ ] CIワークフローの実装
-    - [ ] テストジョブの実装
-    - [ ] ビルドジョブの実装
-    - [ ] セキュリティチェックの実装
-  - [ ] テストコーディング
-    - [ ] ワークフロー動作テスト
-    - [ ] 各ジョブの検証テスト
-  - [ ] 単体テスト実行
-  - [ ] リポジトリコミット
-  - [ ] ToDoチェック
-  - [ ] Issueクローズ
+- [x] **TSK-017-ENV-ci-workflow**: .github/workflows/ci.yml作成・検証 ✅ **完了**
+  - [x] 仕様確認・設計理解
+    - [x] CI/CDパイプラインの設計確認
+    - [x] テスト戦略の理解
+    - [x] デプロイ戦略の確認
+    - [x] セキュリティ要件の理解
+  - [x] コーディング
+    - [x] CIワークフローの実装
+    - [x] テストジョブの実装
+    - [x] ビルドジョブの実装
+    - [x] セキュリティチェックの実装
+  - [x] テストコーディング
+    - [x] ワークフロー動作テスト
+    - [x] 各ジョブの検証テスト
+  - [x] 単体テスト実行
+  - [x] リポジトリコミット
+  - [x] ToDoチェック
+  - [x] Issueクローズ
 
-- [ ] **TSK-018-ENV-cd-workflow**: .github/workflows/cd.yml作成・検証
-  - [ ] 仕様確認・設計理解
-  - [ ] コーディング
-  - [ ] テストコーディング
-  - [ ] 単体テスト実行
-  - [ ] リポジトリコミット
-  - [ ] ToDoチェック
-  - [ ] Issueクローズ
+- [x] **TSK-018-ENV-cd-workflow**: .github/workflows/cd.yml作成・検証 ✅ **完了**
+  - [x] 仕様確認・設計理解
+  - [x] コーディング
+  - [x] テストコーディング
+  - [x] 単体テスト実行
+  - [x] リポジトリコミット
+  - [x] ToDoチェック
+  - [x] Issueクローズ
 
-- [ ] **TSK-019-ENV-test-workflow**: .github/workflows/test.yml作成・検証
-  - [ ] 仕様確認・設計理解
-  - [ ] コーディング
-  - [ ] テストコーディング
-  - [ ] 単体テスト実行
-  - [ ] リポジトリコミット
-  - [ ] ToDoチェック
-  - [ ] Issueクローズ
+- [x] **TSK-019-ENV-test-workflow**: .github/workflows/test.yml作成・検証 ✅ **完了**
+  - [x] 仕様確認・設計理解
+  - [x] コーディング
+  - [x] テストコーディング
+  - [x] 単体テスト実行
+  - [x] リポジトリコミット
+  - [x] ToDoチェック
+  - [x] Issueクローズ
 
 ---
 
 ## 0.5 クロスプラットフォームスクリプト [░░░░░░░░░░] 0% (0/9タスク完了)
 
 ### 0.5.1 クロスプラットフォーム基盤スクリプト
-- [ ] **TSK-020-SCR-setup-cross**: scripts/cross-platform/setup-dev.js作成・検証
-  - [ ] 仕様確認・設計理解
-    - [ ] クロスプラットフォーム要件の確認
-    - [ ] 開発環境セットアップ手順の理解
-    - [ ] 依存関係管理の確認
-    - [ ] エラーハンドリング戦略の理解
-  - [ ] コーディング
-    - [ ] セットアップスクリプトの実装
-    - [ ] 依存関係チェックの実装
-    - [ ] 環境変数設定の実装
-    - [ ] エラーハンドリングの実装
-  - [ ] テストコーディング
-    - [ ] 各OS環境でのテスト
-    - [ ] エラーケースのテスト
-  - [ ] 単体テスト実行
-  - [ ] リポジトリコミット
-  - [ ] ToDoチェック
-  - [ ] Issueクローズ
+- [x] **TSK-020-SCR-setup-cross**: scripts/cross-platform/setup-dev.js作成・検証 ✅ **完了**
+  - [x] 仕様確認・設計理解
+    - [x] クロスプラットフォーム要件の確認
+    - [x] 開発環境セットアップ手順の理解
+    - [x] 依存関係管理の確認
+    - [x] エラーハンドリング戦略の理解
+  - [x] コーディング
+    - [x] セットアップスクリプトの実装
+    - [x] 依存関係チェックの実装
+    - [x] 環境変数設定の実装
+    - [x] エラーハンドリングの実装
+  - [x] テストコーディング
+    - [x] 各OS環境でのテスト
+    - [x] エラーケースのテスト
+  - [x] 単体テスト実行
+  - [x] リポジトリコミット
+  - [x] ToDoチェック
+  - [x] Issueクローズ
 
-- [ ] **TSK-021-SCR-test-cross**: scripts/cross-platform/run-tests.js作成・検証
-  - [ ] 仕様確認・設計理解
-  - [ ] コーディング
-  - [ ] テストコーディング
-  - [ ] 単体テスト実行
-  - [ ] リポジトリコミット
-  - [ ] ToDoチェック
-  - [ ] Issueクローズ
+- [x] **TSK-021-SCR-test-cross**: scripts/cross-platform/run-tests.js作成・検証 ✅ **完了**
+  - [x] 仕様確認・設計理解
+  - [x] コーディング
+  - [x] テストコーディング
+  - [x] 単体テスト実行
+  - [x] リポジトリコミット
+  - [x] ToDoチェック
+  - [x] Issueクローズ
 
-- [ ] **TSK-022-SCR-deploy-cross**: scripts/cross-platform/deploy.js作成・検証
-  - [ ] 仕様確認・設計理解
-  - [ ] コーディング
-  - [ ] テストコーディング
-  - [ ] 単体テスト実行
-  - [ ] リポジトリコミット
-  - [ ] ToDoチェック
-  - [ ] Issueクローズ
+- [x] **TSK-022-SCR-deploy-cross**: scripts/cross-platform/deploy.js作成・検証 ✅ **完了**
+  - [x] 仕様確認・設計理解
+  - [x] コーディング
+  - [x] テストコーディング
+  - [x] 単体テスト実行
+  - [x] リポジトリコミット
+  - [x] ToDoチェック
+  - [x] Issueクローズ
 
-- [ ] **TSK-023-SCR-backup-cross**: scripts/cross-platform/backup.js作成・検証
-  - [ ] 仕様確認・設計理解
-  - [ ] コーディング
-  - [ ] テストコーディング
-  - [ ] 単体テスト実行
-  - [ ] リポジトリコミット
-  - [ ] ToDoチェック
-  - [ ] Issueクローズ
+- [x] **TSK-023-SCR-backup-cross**: scripts/cross-platform/backup.js作成・検証 ✅ **完了**
+  - [x] 仕様確認・設計理解
+  - [x] コーディング
+  - [x] テストコーディング
+  - [x] 単体テスト実行
+  - [x] リポジトリコミット
+  - [x] ToDoチェック
+  - [x] Issueクローズ
 
 ### 0.5.2 Linux専用スクリプト
 - [ ] **TSK-024-SCR-setup-linux**: scripts/linux/setup-dev.sh作成・検証
