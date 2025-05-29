@@ -1,0 +1,222 @@
+# ===================================
+# Task Management System .gitignore
+# ===================================
+# Generated for TSK-001-ENV-gitignore
+# Project: Task Management System
+# Architecture: 4-layer (Presentation/Application/Domain/Infrastructure)
+# Tech Stack: Node.js + TypeScript + React + PostgreSQL + Redis
+
+# ===================================
+# Node.js Dependencies
+# ===================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Package manager files
+package-lock.json
+yarn.lock
+.pnpm-lock.yaml
+
+# ===================================
+# Environment Variables & Secrets
+# ===================================
+.env*
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.staging
+.env.test
+
+# API Keys and secrets
+*.key
+*.pem
+*.p12
+secrets/
+.secrets
+
+# ===================================
+# Build & Distribution
+# ===================================
+dist/
+build/
+out/
+.next/
+.nuxt/
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Vite build cache
+.vite/
+
+# ===================================
+# Logs & Runtime Data
+# ===================================
+logs/
+*.log
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage reports
+coverage/
+.nyc_output/
+*.lcov
+
+# ===================================
+# Development Tools
+# ===================================
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ===================================
+# Testing
+# ===================================
+# Test results
+test-results/
+playwright-report/
+test-output/
+
+# Jest cache
+.jest/
+
+# ===================================
+# Database & Cache
+# ===================================
+# PostgreSQL
+*.sql.backup
+*.dump
+pg_data/
+
+# Redis
+redis-data/
+*.rdb
+
+# Prisma
+prisma/migrations/dev.db*
+prisma/dev.db*
+
+# ===================================
+# Docker & Infrastructure
+# ===================================
+# Docker volumes
+docker-data/
+postgres-data/
+redis-data/
+
+# Docker override files
+docker-compose.override.yml
+docker-compose.local.yml
+
+# ===================================
+# Frontend Specific
+# ===================================
+# React build
+frontend/build/
+frontend/dist/
+
+# Storybook
+storybook-static/
+
+# Bundle analyzer
+bundle-report.html
+
+# ===================================
+# Backend Specific
+# ===================================
+# Backend build
+backend/dist/
+backend/build/
+
+# Uploads
+uploads/
+temp/
+
+# ===================================
+# CI/CD & Deployment
+# ===================================
+# Deployment artifacts
+*.tar.gz
+*.zip
+
+# Terraform
+*.tfstate
+*.tfstate.backup
+.terraform/
+
+# Kubernetes
+*.kubeconfig
+
+# ===================================
+# Monitoring & Analytics
+# ===================================
+# Performance monitoring
+lighthouse-reports/
+performance-reports/
+
+# Error tracking
+sentry-debug-meta/
+
+# ===================================
+# Temporary Files
+# ===================================
+tmp/
+temp/
+.tmp/
+.cache/
+
+# Editor backups
+*~
+*.bak
+*.orig
+
+# ===================================
+# Security & Compliance
+# ===================================
+# Security scan results
+security-reports/
+vulnerability-reports/
+
+# Audit logs
+audit-logs/
+
+# ===================================
+# Development Scripts
+# ===================================
+# Local development scripts
+scripts/local/
+*.local.sh
+*.local.bat
+*.local.js
+
+# ===================================
+# Project Specific Exclusions
+# ===================================
+# Documentation drafts
+docs/drafts/
+
+# Backup files
+*.backup
+
+# Local configuration overrides
+config/local/
