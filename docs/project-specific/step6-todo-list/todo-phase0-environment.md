@@ -13,7 +13,7 @@
 
 Phase 0「環境セットアップ」の詳細ToDoリストです。Docker環境、CI/CD、クロスプラットフォームスクリプトなど、開発環境構築の全28タスクを階層構造チェックボックス形式で管理します。
 
-## Phase 0 進捗: [███████████] 39.3% (11/28タスク完了)
+## Phase 0 進捗: [████████████] 42.9% (12/28タスク完了)
 
 ---
 
@@ -118,7 +118,7 @@ Phase 0「環境セットアップ」の詳細ToDoリストです。Docker環境
 
 ---
 
-## 0.3 データベース・インフラ設定 [█████░░░░░] 16.7% (1/6タスク完了)
+## 0.3 データベース・インフラ設定 [██████░░░░] 33.3% (2/6タスク完了)
 
 ### 0.3.1 データベース設定
 - [x] **TSK-011-ENV-prisma-schema**: backend/prisma/schema.prisma作成・検証 ✅ **完了**
@@ -142,14 +142,14 @@ Phase 0「環境セットアップ」の詳細ToDoリストです。Docker環境
   - [x] Issueクローズ
 
 ### 0.3.2 インフラコンテナ設定
-- [ ] **TSK-012-INF-postgres-dockerfile**: infrastructure/docker/postgres/Dockerfile作成・検証
-  - [ ] 仕様確認・設計理解
-  - [ ] コーディング
-  - [ ] テストコーディング
-  - [ ] 単体テスト実行
-  - [ ] リポジトリコミット
-  - [ ] ToDoチェック
-  - [ ] Issueクローズ
+- [x] **TSK-012-INF-postgres-dockerfile**: infrastructure/docker/postgres/Dockerfile作成・検証 ✅ **完了**
+  - [x] 仕様確認・設計理解
+  - [x] コーディング
+  - [x] テストコーディング
+  - [x] 単体テスト実行
+  - [x] リポジトリコミット
+  - [x] ToDoチェック
+  - [x] Issueクローズ
 
 - [ ] **TSK-013-INF-postgres-init**: infrastructure/docker/postgres/init.sql作成・検証
   - [ ] 仕様確認・設計理解
