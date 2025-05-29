@@ -13,7 +13,7 @@
 
 Phase 0「環境セットアップ」の詳細ToDoリストです。Docker環境、CI/CD、クロスプラットフォームスクリプトなど、開発環境構築の全28タスクを階層構造チェックボックス形式で管理します。
 
-## Phase 0 進捗: [████████░░] 28.6% (8/28タスク完了)
+## Phase 0 進捗: [█████████░] 32.1% (9/28タスク完了)
 
 ---
 
@@ -49,7 +49,7 @@ Phase 0「環境セットアップ」の詳細ToDoリストです。Docker環境
 
 ---
 
-## 0.2 Docker環境 [███████░░░] 71.4% (5/7タスク完了)
+## 0.2 Docker環境 [████████░░] 85.7% (6/7タスク完了)
 
 ### 0.2.1 Docker Compose設定
 - [x] **TSK-004-ENV-docker-compose-dev**: docker-compose.dev.yml作成・検証 ✅ **完了**
@@ -98,14 +98,14 @@ Phase 0「環境セットアップ」の詳細ToDoリストです。Docker環境
   - [x] ToDoチェック
   - [x] Issueクローズ
 
-- [ ] **TSK-009-ENV-frontend-dockerfile**: frontend/Dockerfile作成・検証
-  - [ ] 仕様確認・設計理解
-  - [ ] コーディング
-  - [ ] テストコーディング
-  - [ ] 単体テスト実行
-  - [ ] リポジトリコミット
-  - [ ] ToDoチェック
-  - [ ] Issueクローズ
+- [x] **TSK-009-ENV-frontend-dockerfile**: frontend/Dockerfile作成・検証 ✅ **完了**
+  - [x] 仕様確認・設計理解
+  - [x] コーディング
+  - [x] テストコーディング
+  - [x] 単体テスト実行
+  - [x] リポジトリコミット
+  - [x] ToDoチェック
+  - [x] Issueクローズ
 
 - [ ] **TSK-010-ENV-frontend-dockerignore**: frontend/.dockerignore作成・検証
   - [ ] 仕様確認・設計理解
