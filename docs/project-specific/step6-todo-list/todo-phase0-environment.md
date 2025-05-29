@@ -178,7 +178,7 @@ Phase 0「環境セットアップ」の詳細ToDoリストです。Docker環境
   - [ ] ToDoチェック
   - [ ] Issueクローズ
 
-- [ ] **TSK-016-INF-nginx-config**: infrastructure/docker/nginx/nginx.conf作成・検証
+- [ ] **TSK-015-INF-nginx-dockerfile**: infrastructure/docker/nginx/Dockerfile作成・検証
   - [ ] 仕様確認・設計理解
   - [ ] コーディング
   - [ ] テストコーディング
@@ -186,6 +186,15 @@ Phase 0「環境セットアップ」の詳細ToDoリストです。Docker環境
   - [ ] リポジトリコミット
   - [ ] ToDoチェック
   - [ ] Issueクローズ
+
+- [x] **TSK-016-INF-nginx-config**: infrastructure/docker/nginx/nginx.conf作成・検証 ✅ **完了**
+  - [x] 仕様確認・設計理解
+  - [x] コーディング
+  - [x] テストコーディング
+  - [x] 単体テスト実行
+  - [x] リポジトリコミット
+  - [x] ToDoチェック
+  - [x] Issueクローズ
 
 ---
 
