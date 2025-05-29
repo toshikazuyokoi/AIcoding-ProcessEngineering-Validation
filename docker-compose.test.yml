@@ -1,0 +1,280 @@
+# ===================================
+# Task Management System - Test Environment
+# ===================================
+# Generated for TSK-005-ENV-docker-compose-test
+# Project: Task Management System
+# Environment: Test
+# Purpose: Automated testing, CI/CD integration, test isolation
+
+version: '3.8'
+
+# ===================================
+# Networks
+# ===================================
+networks:
+  task-management-test:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+
+# ===================================
+# Volumes
+# ===================================
+volumes:
+  postgres_test_data:
+    driver: local
+  redis_test_data:
+    driver: local
+  test_coverage_reports:
+    driver: local
+  test_artifacts:
+    driver: local
+
+# ===================================
+# Services
+# ===================================
+services:
+  # ===================================
+  # Test Database Services
+  # ===================================
+  postgres-test:
+    image: postgres:16.1-alpine
+    container_name: task-management-postgres-test
+    restart: "no"
+    environment:
+      POSTGRES_DB: taskdb_test
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password_123
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --locale=C"
+      TZ: UTC
+    ports:
+      - "5433:5432"  # Different port to avoid conflicts
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+      - ./infrastructure/docker/postgres/init-test.sql:/docker-entrypoint-initdb.d/init-test.sql:ro
+    networks:
+      task-management-test:
+        ipv4_address: 172.21.0.10
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test_user -d taskdb_test"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  redis-test:
+    image: redis:7.2.4-alpine
+    container_name: task-management-redis-test
+    restart: "no"
+    environment:
+      TZ: UTC
+    ports:
+      - "6380:6379"  # Different port to avoid conflicts
+    volumes:
+      - redis_test_data:/data
+    command: redis-server --save "" --appendonly no --maxmemory 256mb --maxmemory-policy allkeys-lru
+    networks:
+      task-management-test:
+        ipv4_address: 172.21.0.11
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  # ===================================
+  # Backend Test Service
+  # ===================================
+  backend-test:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.test
+      target: test
+    container_name: task-management-backend-test
+    restart: "no"
+    environment:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://test_user:test_password_123@postgres-test:5432/taskdb_test
+      REDIS_URL: redis://redis-test:6379
+      JWT_SECRET: test_jwt_secret_key_for_testing_only
+      JWT_EXPIRES_IN: 1h
+      PORT: 8001
+      LOG_LEVEL: error
+      TZ: UTC
+      # Test-specific environment variables
+      TEST_TIMEOUT: 30000
+      JEST_WORKERS: 2
+      COVERAGE_THRESHOLD: 90
+    volumes:
+      - ./backend:/app
+      - test_coverage_reports:/app/coverage
+      - test_artifacts:/app/test-results
+      - /app/node_modules  # Use container's node_modules
+    working_dir: /app
+    command: npm run test:ci
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+      redis-test:
+        condition: service_healthy
+    networks:
+      task-management-test:
+        ipv4_address: 172.21.0.20
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  # ===================================
+  # Frontend Test Service
+  # ===================================
+  frontend-test:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.test
+      target: test
+    container_name: task-management-frontend-test
+    restart: "no"
+    environment:
+      NODE_ENV: test
+      REACT_APP_API_URL: http://backend-test:8001
+      CI: true
+      TZ: UTC
+      # Test-specific environment variables
+      JEST_WORKERS: 2
+      COVERAGE_THRESHOLD: 90
+      GENERATE_SOURCEMAP: false
+    volumes:
+      - ./frontend:/app
+      - test_coverage_reports:/app/coverage
+      - test_artifacts:/app/test-results
+      - /app/node_modules  # Use container's node_modules
+    working_dir: /app
+    command: npm run test:ci
+    depends_on:
+      - backend-test
+    networks:
+      task-management-test:
+        ipv4_address: 172.21.0.30
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  # ===================================
+  # E2E Test Service
+  # ===================================
+  e2e-test:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.e2e
+      target: e2e
+    container_name: task-management-e2e-test
+    restart: "no"
+    environment:
+      NODE_ENV: test
+      BASE_URL: http://frontend-test:3000
+      API_URL: http://backend-test:8001
+      TZ: UTC
+      # E2E test configuration
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      HEADLESS: true
+      TIMEOUT: 60000
+    volumes:
+      - ./frontend:/app
+      - test_artifacts:/app/test-results
+      - test_artifacts:/app/playwright-report
+      - /app/node_modules
+    working_dir: /app
+    command: npm run test:e2e:ci
+    depends_on:
+      - frontend-test
+      - backend-test
+    networks:
+      task-management-test:
+        ipv4_address: 172.21.0.40
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  # ===================================
+  # Test Reporting Service
+  # ===================================
+  test-reporter:
+    image: node:20.11.0-alpine
+    container_name: task-management-test-reporter
+    restart: "no"
+    environment:
+      NODE_ENV: test
+      TZ: UTC
+    volumes:
+      - test_coverage_reports:/reports/coverage
+      - test_artifacts:/reports/artifacts
+      - ./scripts/test-reporting:/scripts:ro
+    working_dir: /scripts
+    command: node generate-test-report.js
+    depends_on:
+      - backend-test
+      - frontend-test
+      - e2e-test
+    networks:
+      task-management-test:
+        ipv4_address: 172.21.0.50
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  # ===================================
+  # Test Database Seeder
+  # ===================================
+  test-seeder:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.test
+      target: test
+    container_name: task-management-test-seeder
+    restart: "no"
+    environment:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://test_user:test_password_123@postgres-test:5432/taskdb_test
+      TZ: UTC
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    working_dir: /app
+    command: npm run db:seed:test
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+    networks:
+      task-management-test:
+        ipv4_address: 172.21.0.60
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
