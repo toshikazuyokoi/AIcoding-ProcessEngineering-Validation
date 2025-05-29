@@ -1,0 +1,391 @@
+# ===================================
+# Task Management System - CI Workflow Test
+# ===================================
+# Generated for TSK-017-ENV-ci-workflow
+# Project: Task Management System
+# Component: CI Workflow Testing
+# Purpose: Test and validate CI pipeline functionality
+
+name: Test CI Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_type:
+        description: 'Type of test to run'
+        required: true
+        default: 'full'
+        type: choice
+        options:
+          - full
+          - syntax
+          - jobs
+          - security
+
+env:
+  NODE_VERSION: '20.11.0'
+
+jobs:
+  # ===================================
+  # Syntax Validation
+  # ===================================
+  syntax-validation:
+    name: CI Workflow Syntax Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Validate CI workflow syntax
+        run: |
+          echo "🔍 Validating CI workflow syntax..."
+          
+          # Check if ci.yml exists
+          if [ ! -f ".github/workflows/ci.yml" ]; then
+            echo "❌ CI workflow file not found"
+            exit 1
+          fi
+          
+          # Basic YAML syntax validation
+          python3 -c "
+          import yaml
+          import sys
+          
+          try:
+              with open('.github/workflows/ci.yml', 'r') as f:
+                  yaml.safe_load(f)
+              print('✅ YAML syntax is valid')
+          except yaml.YAMLError as e:
+              print(f'❌ YAML syntax error: {e}')
+              sys.exit(1)
+          "
+          
+      - name: Check required workflow elements
+        run: |
+          echo "🔍 Checking required workflow elements..."
+          
+          # Check for required sections
+          REQUIRED_SECTIONS=(
+            "name:"
+            "on:"
+            "jobs:"
+            "code-quality:"
+            "unit-tests:"
+            "security-scan:"
+            "docker-build:"
+            "integration-tests:"
+            "quality-gate:"
+          )
+          
+          for section in "${REQUIRED_SECTIONS[@]}"; do
+            if grep -q "$section" .github/workflows/ci.yml; then
+              echo "✅ Found: $section"
+            else
+              echo "❌ Missing: $section"
+              exit 1
+            fi
+          done
+          
+      - name: Validate job dependencies
+        run: |
+          echo "🔍 Validating job dependencies..."
+          
+          # Check if jobs have proper needs dependencies
+          if grep -A 5 "unit-tests:" .github/workflows/ci.yml | grep -q "needs: code-quality"; then
+            echo "✅ unit-tests depends on code-quality"
+          else
+            echo "❌ unit-tests missing dependency on code-quality"
+            exit 1
+          fi
+          
+          if grep -A 5 "docker-build:" .github/workflows/ci.yml | grep -q "needs: \[unit-tests, security-scan\]"; then
+            echo "✅ docker-build has correct dependencies"
+          else
+            echo "❌ docker-build missing correct dependencies"
+            exit 1
+          fi
+
+  # ===================================
+  # Job Configuration Test
+  # ===================================
+  job-configuration-test:
+    name: Job Configuration Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: syntax-validation
+    if: github.event.inputs.test_type == 'full' || github.event.inputs.test_type == 'jobs'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Test Node.js setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          
+      - name: Verify Node.js version
+        run: |
+          NODE_ACTUAL=$(node --version)
+          NODE_EXPECTED="v${{ env.NODE_VERSION }}"
+          
+          if [[ "$NODE_ACTUAL" == "$NODE_EXPECTED" ]]; then
+            echo "✅ Node.js version correct: $NODE_ACTUAL"
+          else
+            echo "❌ Node.js version mismatch. Expected: $NODE_EXPECTED, Actual: $NODE_ACTUAL"
+            exit 1
+          fi
+          
+      - name: Test environment variables
+        run: |
+          echo "🔍 Testing environment variables..."
+          
+          # Check if required environment variables are set
+          ENV_VARS=(
+            "NODE_VERSION"
+            "QUALITY_GATE_COVERAGE"
+            "QUALITY_GATE_SECURITY"
+            "DOCKER_BUILDKIT"
+            "COMPOSE_DOCKER_CLI_BUILD"
+          )
+          
+          for var in "${ENV_VARS[@]}"; do
+            if [ -n "${!var}" ]; then
+              echo "✅ $var is set: ${!var}"
+            else
+              echo "❌ $var is not set"
+              exit 1
+            fi
+          done
+          
+      - name: Test artifact upload simulation
+        run: |
+          echo "🔍 Testing artifact upload simulation..."
+          
+          # Create test artifacts
+          mkdir -p test-artifacts
+          echo "Test artifact content" > test-artifacts/test-file.txt
+          
+          # Simulate artifact creation
+          echo "✅ Test artifacts created successfully"
+          
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-test-artifacts
+          path: test-artifacts/
+          retention-days: 1
+
+  # ===================================
+  # Security Configuration Test
+  # ===================================
+  security-configuration-test:
+    name: Security Configuration Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: syntax-validation
+    if: github.event.inputs.test_type == 'full' || github.event.inputs.test_type == 'security'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Test CodeQL configuration
+        run: |
+          echo "🔍 Testing CodeQL configuration..."
+          
+          # Check if CodeQL action is properly configured
+          if grep -q "github/codeql-action/analyze@v3" .github/workflows/ci.yml; then
+            echo "✅ CodeQL action is configured"
+          else
+            echo "❌ CodeQL action not found"
+            exit 1
+          fi
+          
+          # Check if languages are specified
+          if grep -A 3 "github/codeql-action/analyze@v3" .github/workflows/ci.yml | grep -q "languages: typescript"; then
+            echo "✅ TypeScript language specified for CodeQL"
+          else
+            echo "❌ TypeScript language not specified for CodeQL"
+            exit 1
+          fi
+          
+      - name: Test security audit configuration
+        run: |
+          echo "🔍 Testing security audit configuration..."
+          
+          # Check if npm audit is configured
+          if grep -q "npm audit --audit-level moderate" .github/workflows/ci.yml; then
+            echo "✅ npm audit is configured with moderate level"
+          else
+            echo "❌ npm audit not properly configured"
+            exit 1
+          fi
+          
+      - name: Test timeout configurations
+        run: |
+          echo "🔍 Testing timeout configurations..."
+          
+          # Check if jobs have timeout configurations
+          JOBS_WITH_TIMEOUT=$(grep -c "timeout-minutes:" .github/workflows/ci.yml)
+          
+          if [ "$JOBS_WITH_TIMEOUT" -ge 5 ]; then
+            echo "✅ Multiple jobs have timeout configurations ($JOBS_WITH_TIMEOUT found)"
+          else
+            echo "❌ Insufficient timeout configurations ($JOBS_WITH_TIMEOUT found)"
+            exit 1
+          fi
+
+  # ===================================
+  # Integration Test Simulation
+  # ===================================
+  integration-test-simulation:
+    name: Integration Test Simulation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [job-configuration-test, security-configuration-test]
+    if: github.event.inputs.test_type == 'full'
+    
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_USER: test_user
+          POSTGRES_DB: task_management_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+          
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Test database connection
+        run: |
+          echo "🔍 Testing database connection..."
+          
+          # Test PostgreSQL connection
+          PGPASSWORD=test_password psql -h localhost -U test_user -d task_management_test -c "SELECT version();"
+          
+          if [ $? -eq 0 ]; then
+            echo "✅ PostgreSQL connection successful"
+          else
+            echo "❌ PostgreSQL connection failed"
+            exit 1
+          fi
+          
+      - name: Test Redis connection
+        run: |
+          echo "🔍 Testing Redis connection..."
+          
+          # Test Redis connection
+          redis-cli -h localhost ping
+          
+          if [ $? -eq 0 ]; then
+            echo "✅ Redis connection successful"
+          else
+            echo "❌ Redis connection failed"
+            exit 1
+          fi
+          
+      - name: Simulate integration test environment
+        run: |
+          echo "🔍 Simulating integration test environment..."
+          
+          # Create mock test results
+          mkdir -p test-results/integration
+          echo '{"tests": 10, "passed": 10, "failed": 0}' > test-results/integration/results.json
+          
+          echo "✅ Integration test environment simulation completed"
+          
+      - name: Upload integration test simulation results
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-test-simulation
+          path: test-results/
+          retention-days: 1
+
+  # ===================================
+  # Test Results Summary
+  # ===================================
+  test-results-summary:
+    name: Test Results Summary
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [syntax-validation, job-configuration-test, security-configuration-test, integration-test-simulation]
+    if: always()
+    
+    steps:
+      - name: Download all test artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: test-artifacts/
+          
+      - name: Generate test summary
+        run: |
+          echo "# CI Workflow Test Summary" > test-summary.md
+          echo "## Test Results" >> test-summary.md
+          echo "- **Syntax Validation**: ${{ needs.syntax-validation.result }}" >> test-summary.md
+          echo "- **Job Configuration**: ${{ needs.job-configuration-test.result }}" >> test-summary.md
+          echo "- **Security Configuration**: ${{ needs.security-configuration-test.result }}" >> test-summary.md
+          echo "- **Integration Simulation**: ${{ needs.integration-test-simulation.result }}" >> test-summary.md
+          echo "" >> test-summary.md
+          echo "## Test Type: ${{ github.event.inputs.test_type }}" >> test-summary.md
+          echo "## Timestamp: $(date -u)" >> test-summary.md
+          
+          cat test-summary.md
+          
+      - name: Check overall test status
+        run: |
+          FAILED_TESTS=0
+          
+          if [ "${{ needs.syntax-validation.result }}" != "success" ]; then
+            echo "❌ Syntax validation failed"
+            FAILED_TESTS=$((FAILED_TESTS + 1))
+          fi
+          
+          if [ "${{ needs.job-configuration-test.result }}" != "success" ] && [ "${{ needs.job-configuration-test.result }}" != "skipped" ]; then
+            echo "❌ Job configuration test failed"
+            FAILED_TESTS=$((FAILED_TESTS + 1))
+          fi
+          
+          if [ "${{ needs.security-configuration-test.result }}" != "success" ] && [ "${{ needs.security-configuration-test.result }}" != "skipped" ]; then
+            echo "❌ Security configuration test failed"
+            FAILED_TESTS=$((FAILED_TESTS + 1))
+          fi
+          
+          if [ "${{ needs.integration-test-simulation.result }}" != "success" ] && [ "${{ needs.integration-test-simulation.result }}" != "skipped" ]; then
+            echo "❌ Integration test simulation failed"
+            FAILED_TESTS=$((FAILED_TESTS + 1))
+          fi
+          
+          if [ $FAILED_TESTS -eq 0 ]; then
+            echo "🎉 All CI workflow tests passed!"
+          else
+            echo "❌ $FAILED_TESTS test(s) failed"
+            exit 1
+          fi
+          
+      - name: Upload test summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-workflow-test-summary
+          path: test-summary.md
+          retention-days: 7

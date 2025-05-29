@@ -1,0 +1,451 @@
+# ===================================
+# Task Management System - CI Workflow
+# ===================================
+# Generated for TSK-017-ENV-ci-workflow
+# Project: Task Management System
+# Component: Continuous Integration Pipeline
+# Purpose: Automated testing, building, and quality assurance
+
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main, develop, augment-*]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  NODE_VERSION: "20.11.0"
+  QUALITY_GATE_COVERAGE: 90
+  QUALITY_GATE_SECURITY: 0
+  DOCKER_BUILDKIT: 1
+  COMPOSE_DOCKER_CLI_BUILD: 1
+
+jobs:
+  # ===================================
+  # Stage 1: Code Quality & Static Analysis
+  # ===================================
+  code-quality:
+    name: Code Quality & Static Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
+
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: npm ci --silent
+
+      - name: Install frontend dependencies
+        working-directory: ./frontend
+        run: npm ci --silent
+
+      - name: Backend linting
+        working-directory: ./backend
+        run: npm run lint
+
+      - name: Frontend linting
+        working-directory: ./frontend
+        run: npm run lint
+
+      - name: Backend type checking
+        working-directory: ./backend
+        run: npm run type-check
+
+      - name: Frontend type checking
+        working-directory: ./frontend
+        run: npm run type-check
+
+      - name: Check code formatting
+        run: |
+          npx prettier --check "backend/**/*.{ts,js,json}" "frontend/**/*.{ts,tsx,js,jsx,json}"
+
+      - name: Upload lint results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lint-results
+          path: |
+            backend/lint-results.json
+            frontend/lint-results.json
+          retention-days: 7
+
+  # ===================================
+  # Stage 2: Unit Testing
+  # ===================================
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: code-quality
+
+    strategy:
+      matrix:
+        component: [backend, frontend]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: ${{ matrix.component }}/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./${{ matrix.component }}
+        run: npm ci --silent
+
+      - name: Run unit tests with coverage
+        working-directory: ./${{ matrix.component }}
+        run: npm run test:coverage
+        env:
+          CI: true
+
+      - name: Check coverage threshold
+        working-directory: ./${{ matrix.component }}
+        run: |
+          COVERAGE=$(npm run test:coverage:check --silent | grep -o '[0-9]*\.[0-9]*' | head -1)
+          echo "Coverage: $COVERAGE%"
+          if (( $(echo "$COVERAGE < ${{ env.QUALITY_GATE_COVERAGE }}" | bc -l) )); then
+            echo "❌ ${{ matrix.component }} coverage $COVERAGE% is below ${{ env.QUALITY_GATE_COVERAGE }}%"
+            exit 1
+          else
+            echo "✅ ${{ matrix.component }} coverage $COVERAGE% meets requirement"
+          fi
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.component }}
+          path: ${{ matrix.component }}/coverage/
+          retention-days: 7
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.component }}
+          path: ${{ matrix.component }}/test-results/
+          retention-days: 7
+
+  # ===================================
+  # Stage 3: Security Scanning
+  # ===================================
+  security-scan:
+    name: Security Scanning
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: code-quality
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Backend dependency audit
+        working-directory: ./backend
+        run: |
+          npm ci --silent
+          npm audit --audit-level moderate
+
+      - name: Frontend dependency audit
+        working-directory: ./frontend
+        run: |
+          npm ci --silent
+          npm audit --audit-level moderate
+
+      - name: Run CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          languages: typescript
+
+      - name: Upload security scan results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-scan-results
+          path: |
+            backend/audit-results.json
+            frontend/audit-results.json
+          retention-days: 7
+
+  # ===================================
+  # Stage 4: Docker Build & Test
+  # ===================================
+  docker-build:
+    name: Docker Build & Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: [unit-tests, security-scan]
+
+    strategy:
+      matrix:
+        service: [backend, frontend, nginx]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: |
+          if [ "${{ matrix.service }}" = "nginx" ]; then
+            docker build -t task-management-${{ matrix.service }}:test infrastructure/docker/nginx/
+          else
+            docker build -t task-management-${{ matrix.service }}:test ${{ matrix.service }}/
+          fi
+
+      - name: Test Docker image
+        run: |
+          docker run --rm -d --name test-${{ matrix.service }} task-management-${{ matrix.service }}:test
+          sleep 10
+          docker logs test-${{ matrix.service }}
+          docker stop test-${{ matrix.service }} || true
+
+      - name: Save Docker image
+        run: |
+          docker save task-management-${{ matrix.service }}:test | gzip > ${{ matrix.service }}-image.tar.gz
+
+      - name: Upload Docker image
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-image-${{ matrix.service }}
+          path: ${{ matrix.service }}-image.tar.gz
+          retention-days: 1
+
+  # ===================================
+  # Stage 5: Integration Testing
+  # ===================================
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: docker-build
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_USER: test_user
+          POSTGRES_DB: task_management_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: npm ci --silent
+
+      - name: Run database migrations
+        working-directory: ./backend
+        run: npm run db:migrate
+        env:
+          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/task_management_test
+
+      - name: Run integration tests
+        working-directory: ./backend
+        run: npm run test:integration
+        env:
+          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/task_management_test
+          REDIS_URL: redis://localhost:6379
+          NODE_ENV: test
+
+      - name: Upload integration test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: integration-test-results
+          path: backend/test-results/integration/
+          retention-days: 7
+
+  # ===================================
+  # Stage 6: Quality Gate & Reporting
+  # ===================================
+  quality-gate:
+    name: Quality Gate & Reporting
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [unit-tests, security-scan, integration-tests]
+    if: always()
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Generate quality report
+        run: |
+          echo "# CI Pipeline Quality Report" > quality-report.md
+          echo "## Build Information" >> quality-report.md
+          echo "- **Commit**: ${{ github.sha }}" >> quality-report.md
+          echo "- **Branch**: ${{ github.ref_name }}" >> quality-report.md
+          echo "- **Workflow**: ${{ github.workflow }}" >> quality-report.md
+          echo "- **Run Number**: ${{ github.run_number }}" >> quality-report.md
+          echo "- **Timestamp**: $(date -u)" >> quality-report.md
+          echo "" >> quality-report.md
+
+          echo "## Quality Metrics" >> quality-report.md
+          echo "### Test Coverage" >> quality-report.md
+          if [ -d "artifacts/coverage-backend" ]; then
+            echo "- Backend: ✅ Coverage reports generated" >> quality-report.md
+          else
+            echo "- Backend: ❌ Coverage reports missing" >> quality-report.md
+          fi
+          if [ -d "artifacts/coverage-frontend" ]; then
+            echo "- Frontend: ✅ Coverage reports generated" >> quality-report.md
+          else
+            echo "- Frontend: ❌ Coverage reports missing" >> quality-report.md
+          fi
+
+          echo "### Security Scan" >> quality-report.md
+          if [ -d "artifacts/security-scan-results" ]; then
+            echo "- Security: ✅ Scan completed" >> quality-report.md
+          else
+            echo "- Security: ❌ Scan failed" >> quality-report.md
+          fi
+
+          echo "### Integration Tests" >> quality-report.md
+          if [ -d "artifacts/integration-test-results" ]; then
+            echo "- Integration: ✅ Tests passed" >> quality-report.md
+          else
+            echo "- Integration: ❌ Tests failed" >> quality-report.md
+          fi
+
+      - name: Check quality gates
+        run: |
+          QUALITY_PASSED=true
+
+          # Check if all required artifacts exist
+          if [ ! -d "artifacts/coverage-backend" ] || [ ! -d "artifacts/coverage-frontend" ]; then
+            echo "❌ Coverage artifacts missing"
+            QUALITY_PASSED=false
+          fi
+
+          if [ ! -d "artifacts/security-scan-results" ]; then
+            echo "❌ Security scan artifacts missing"
+            QUALITY_PASSED=false
+          fi
+
+          if [ ! -d "artifacts/integration-test-results" ]; then
+            echo "❌ Integration test artifacts missing"
+            QUALITY_PASSED=false
+          fi
+
+          if [ "$QUALITY_PASSED" = "true" ]; then
+            echo "✅ All quality gates passed"
+            echo "QUALITY_GATE_STATUS=passed" >> $GITHUB_ENV
+          else
+            echo "❌ Quality gates failed"
+            echo "QUALITY_GATE_STATUS=failed" >> $GITHUB_ENV
+            exit 1
+          fi
+
+      - name: Upload quality report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: quality-report
+          path: quality-report.md
+          retention-days: 30
+
+      - name: Comment PR with quality report
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('quality-report.md', 'utf8');
+            const status = process.env.QUALITY_GATE_STATUS === 'passed' ? '✅ Passed' : '❌ Failed';
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 🔍 CI Pipeline Quality Report\n\n${report}\n\n**Status**: ${status}`
+            });
+
+  # ===================================
+  # Stage 7: Notification & Cleanup
+  # ===================================
+  notification:
+    name: Notification & Cleanup
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: quality-gate
+    if: always()
+
+    steps:
+      - name: Notify success
+        if: needs.quality-gate.result == 'success'
+        run: |
+          echo "🎉 CI Pipeline completed successfully!"
+          echo "All quality gates passed for commit ${{ github.sha }}"
+
+      - name: Notify failure
+        if: needs.quality-gate.result != 'success'
+        run: |
+          echo "❌ CI Pipeline failed!"
+          echo "Quality gates failed for commit ${{ github.sha }}"
+          echo "Please check the logs and fix the issues."
+
+      - name: Cleanup temporary artifacts
+        run: |
+          echo "🧹 Cleaning up temporary artifacts..."
+          echo "CI Pipeline completed at $(date -u)"
