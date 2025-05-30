@@ -47,11 +47,11 @@
 
 ### 進捗の可視化
 ```text
-全体進捗: [██████░░░░░░░░░░░░░░] 38.5% (35/91タスク完了)
+全体進捗: [██████░░░░░░░░░░░░░░] 39.6% (36/91タスク完了)
 
 Phase別進捗:
 - Phase 0: [██████████] 100% (28/28タスク完了) - 環境セットアップ 🎉 **完了**
-- Phase 1: [██████░░░░] 31.8% (7/22タスク完了) - Infrastructure Layer
+- Phase 1: [██████░░░░] 36.4% (8/22タスク完了) - Infrastructure Layer
 - Phase 2: [░░░░░░░░░░] 0% (0/15タスク完了) - Domain Layer
 - Phase 3: [░░░░░░░░░░] 0% (0/12タスク完了) - Application Layer
 - Phase 4: [░░░░░░░░░░] 0% (0/14タスク完了) - Presentation Layer
@@ -78,14 +78,14 @@ Phase別進捗:
 - [x] **Linux**: setup-dev.sh ✅, run-tests.sh ✅, deploy.sh ✅, backup.sh ✅
 - [x] **Windows**: setup-dev.bat ✅
 
-## Phase 1: Infrastructure Layer [██████░░░░] 31.8% (7/22タスク完了)
+## Phase 1: Infrastructure Layer [██████░░░░] 36.4% (8/22タスク完了)
 
 ### 1.1 基盤ユーティリティ（6タスク）[██████████] 100% 🎉 **完了**
 - [x] **基盤**: database-connection ✅, logger ✅, error-handler ✅, password-hasher ✅, jwt-manager ✅, cache-service ✅
 
-### 1.2 設定・環境管理（7タスク）[██░░░░░░░░] 14.3%
+### 1.2 設定・環境管理（7タスク）[████░░░░░░] 28.6%
 - [ ] **設定**: database.ts, redis.ts, environment.ts
-- [x] **環境変数**: backend/.env.example ✅, frontend/.env.example
+- [x] **環境変数**: backend/.env.example ✅, frontend/.env.example ✅
 - [ ] **プロジェクト**: package.json, tsconfig.json
 
 ### 1.3 リポジトリ層（4タスク）
