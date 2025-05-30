@@ -13,7 +13,7 @@
 
 Phase 1「Infrastructure Layer」の詳細ToDoリストです。データベース接続、基盤ユーティリティ、リポジトリ層など、インフラストラクチャ層の全22タスクを階層構造チェックボックス形式で管理します。
 
-## Phase 1 進捗: [███████░░░] 45.5% (10/22タスク完了)
+## Phase 1 進捗: [████████░░] 50.0% (11/22タスク完了)
 
 ---
 
@@ -141,7 +141,7 @@ Phase 1「Infrastructure Layer」の詳細ToDoリストです。データベー�
 
 ---
 
-## 1.2 設定・環境管理 [██████░░░░] 57.1% (4/7タスク完了)
+## 1.2 設定・環境管理 [███████░░░] 71.4% (5/7タスク完了)
 
 ### 1.2.1 設定ファイル設定
 - [x] **TSK-035-CFG-Database**: backend/config/database.ts作成・検証 ✅ **完了**
@@ -162,14 +162,14 @@ Phase 1「Infrastructure Layer」の詳細ToDoリストです。データベー�
   - [x] ToDoチェック ✅
   - [x] Issueクローズ ✅
 
-- [ ] **TSK-037-CFG-Environment**: backend/config/environment.ts作成・検証
-  - [ ] 仕様確認・設計理解
-  - [ ] コーディング
-  - [ ] テストコーディング
-  - [ ] 単体テスト実行
-  - [ ] リポジトリコミット
-  - [ ] ToDoチェック
-  - [ ] Issueクローズ
+- [x] **TSK-037-CFG-Environment**: backend/config/environment.ts作成・検証 ✅ **完了**
+  - [x] 仕様確認・設計理解 ✅
+  - [x] コーディング ✅
+  - [x] テストコーディング ✅
+  - [x] 単体テスト実行 ✅
+  - [x] リポジトリコミット ✅
+  - [x] ToDoチェック ✅
+  - [x] Issueクローズ ✅
 
 ### 1.2.2 環境変数テンプレート
 - [x] **TSK-049-ENV-backend-env-example**: backend/.env.example作成・検証 ✅ **完了**
