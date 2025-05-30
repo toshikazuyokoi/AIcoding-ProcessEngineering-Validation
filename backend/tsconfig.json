@@ -3,8 +3,9 @@
     "target": "ES2022",
     "module": "commonjs",
     "lib": ["ES2022"],
+    "types": ["node", "jest"],
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": "./",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -33,12 +34,13 @@
       "@/*": ["src/*"],
       "@/utils/*": ["src/utils/*"],
       "@/types/*": ["src/types/*"],
-      "@/config/*": ["src/config/*"]
+      "@/config/*": ["config/*"]
     },
     "typeRoots": ["./node_modules/@types", "./src/types"]
   },
   "include": [
     "src/**/*",
+    "config/**/*",
     "tests/**/*"
   ],
   "exclude": [

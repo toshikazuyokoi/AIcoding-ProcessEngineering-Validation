@@ -40,15 +40,19 @@
     "preset": "ts-jest",
     "testEnvironment": "node",
     "roots": [
-      "<rootDir>/src"
+      "<rootDir>/src",
+      "<rootDir>/config"
     ],
     "testMatch": [
       "**/__tests__/**/*.test.ts"
     ],
     "collectCoverageFrom": [
       "src/**/*.ts",
+      "config/**/*.ts",
       "!src/**/*.d.ts",
-      "!src/**/__tests__/**"
+      "!config/**/*.d.ts",
+      "!src/**/__tests__/**",
+      "!config/**/__tests__/**"
     ],
     "coverageDirectory": "coverage",
     "coverageReporters": [
