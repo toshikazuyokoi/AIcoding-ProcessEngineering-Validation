@@ -47,11 +47,11 @@
 
 ### 進捗の可視化
 ```text
-全体進捗: [██████░░░░░░░░░░░░░░] 34.8% (31/89タスク完了)
+全体進捗: [██████░░░░░░░░░░░░░░] 36.0% (32/89タスク完了)
 
 Phase別進捗:
 - Phase 0: [██████████] 100% (28/28タスク完了) - 環境セットアップ 🎉 **完了**
-- Phase 1: [███░░░░░░░] 15% (3/20タスク完了) - Infrastructure Layer
+- Phase 1: [████░░░░░░] 20% (4/20タスク完了) - Infrastructure Layer
 - Phase 2: [░░░░░░░░░░] 0% (0/15タスク完了) - Domain Layer
 - Phase 3: [░░░░░░░░░░] 0% (0/12タスク完了) - Application Layer
 - Phase 4: [░░░░░░░░░░] 0% (0/14タスク完了) - Presentation Layer
@@ -78,11 +78,11 @@ Phase別進捗:
 - [x] **Linux**: setup-dev.sh ✅, run-tests.sh ✅, deploy.sh ✅, backup.sh ✅
 - [x] **Windows**: setup-dev.bat ✅
 
-## Phase 1: Infrastructure Layer [███░░░░░░░] 15% (3/20タスク完了)
+## Phase 1: Infrastructure Layer [████░░░░░░] 20% (4/20タスク完了)
 
-### 1.1 基盤ユーティリティ（6タスク）[██████░░░░] 50.0%
-- [x] **基盤**: database-connection ✅, logger ✅, error-handler ✅
-- [ ] **残り**: password-hasher, jwt-manager, cache-service
+### 1.1 基盤ユーティリティ（6タスク）[████████░░] 66.7%
+- [x] **基盤**: database-connection ✅, logger ✅, error-handler ✅, password-hasher ✅
+- [ ] **残り**: jwt-manager, cache-service
 
 ### 1.2 設定・環境管理（5タスク）
 - [ ] **設定**: database.ts, redis.ts, environment.ts, package.json, tsconfig.json
