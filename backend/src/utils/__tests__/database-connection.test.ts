@@ -156,12 +156,10 @@ describe('DatabaseConnection', () => {
     test('should fail after max retry attempts', async () => {
       mockPrismaClient.$queryRaw.mockRejectedValue(new Error('Connection failed'));
 
-      try {
+      await expect(async () => {
         dbConnection = DatabaseConnection.getInstance();
-        await new Promise(resolve => setTimeout(resolve, 2000));
-      } catch (error: any) {
-        expect(error.message).toContain('Database connection failed after 2 attempts');
-      }
+        await new Promise(resolve => setTimeout(resolve, 3000));
+      }).rejects.toThrow('Database connection failed after 2 attempts');
     });
   });
 
@@ -353,7 +351,9 @@ describe('DatabaseConnection', () => {
     });
 
     test('getPrismaClient should return Prisma client', async () => {
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // Ensure connection is established first
+      dbConnection = DatabaseConnection.getInstance();
+      await new Promise(resolve => setTimeout(resolve, 200));
 
       const client = getPrismaClient();
       expect(client).toBe(mockPrismaClient);

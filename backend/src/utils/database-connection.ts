@@ -15,6 +15,7 @@
  */
 
 import { PrismaClient } from '@prisma/client';
+import { Logger, createLogger } from './logger';
 
 // Node.js global types
 declare global {
@@ -28,39 +29,6 @@ declare global {
       DB_RETRY_ATTEMPTS?: string;
       DB_RETRY_DELAY?: string;
       NODE_ENV?: string;
-    }
-  }
-}
-
-/**
- * Simple Logger implementation for database connection
- */
-class Logger {
-  private context: string;
-
-  constructor(context: string) {
-    this.context = context;
-  }
-
-  info(message: string, ...args: any[]): void {
-    console.log(`[INFO] [${this.context}] ${message}`, ...args);
-  }
-
-  success(message: string, ...args: any[]): void {
-    console.log(`[SUCCESS] [${this.context}] ${message}`, ...args);
-  }
-
-  warning(message: string, ...args: any[]): void {
-    console.warn(`[WARNING] [${this.context}] ${message}`, ...args);
-  }
-
-  error(message: string, error?: any): void {
-    console.error(`[ERROR] [${this.context}] ${message}`, error);
-  }
-
-  debug(message: string, ...args: any[]): void {
-    if (process.env.NODE_ENV === 'development') {
-      console.debug(`[DEBUG] [${this.context}] ${message}`, ...args);
     }
   }
 }
@@ -121,7 +89,7 @@ export class DatabaseConnection {
    * Private constructor for singleton pattern
    */
   private constructor(config?: Partial<DatabaseConfig>) {
-    this.logger = new Logger('DatabaseConnection');
+    this.logger = createLogger('DatabaseConnection');
     this.config = this.buildConfig(config);
     this.initializeConnection();
   }
@@ -141,7 +109,7 @@ export class DatabaseConnection {
    */
   private buildConfig(config?: Partial<DatabaseConfig>): DatabaseConfig {
     const defaultConfig: DatabaseConfig = {
-      url: process.env.DATABASE_URL || 'postgresql://postgres:sxe-10Zz@localhost:5432/taskdb_dev',
+      url: process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:5432/taskdb_dev',
       maxConnections: parseInt(process.env.DB_MAX_CONNECTIONS || '20'),
       minConnections: parseInt(process.env.DB_MIN_CONNECTIONS || '5'),
       connectionTimeout: parseInt(process.env.DB_CONNECTION_TIMEOUT || '30000'),
@@ -180,14 +148,14 @@ export class DatabaseConnection {
 
       this.status = ConnectionStatus.CONNECTED;
       this.retryCount = 0;
-      this.logger.success('Database connection established successfully');
+      this.logger.info('Database connection established successfully');
 
       // Start health check
       this.startHealthCheck();
 
     } catch (error) {
       this.status = ConnectionStatus.ERROR;
-      this.logger.error('Failed to initialize database connection', error);
+      this.logger.error('Failed to initialize database connection', error as Error);
       await this.handleConnectionError(error);
     }
   }
@@ -204,7 +172,7 @@ export class DatabaseConnection {
       await this.prisma.$queryRaw`SELECT 1`;
       this.logger.info('Database connection test successful');
     } catch (error) {
-      this.logger.error('Database connection test failed', error);
+      this.logger.error('Database connection test failed', error as Error);
       throw error;
     }
   }
@@ -217,7 +185,7 @@ export class DatabaseConnection {
 
     if (this.retryCount <= this.config.retryAttempts) {
       this.status = ConnectionStatus.RECONNECTING;
-      this.logger.warning(`Connection failed, retrying... (${this.retryCount}/${this.config.retryAttempts})`);
+      this.logger.warn(`Connection failed, retrying... (${this.retryCount}/${this.config.retryAttempts})`);
 
       await this.delay(this.config.retryDelay * this.retryCount);
       await this.initializeConnection();
@@ -240,7 +208,7 @@ export class DatabaseConnection {
       try {
         await this.healthCheck();
       } catch (error) {
-        this.logger.warning('Health check failed, attempting reconnection...');
+        this.logger.warn('Health check failed, attempting reconnection...');
         await this.reconnect();
       }
     }, 30000); // Check every 30 seconds
@@ -258,7 +226,7 @@ export class DatabaseConnection {
       await this.prisma.$queryRaw`SELECT 1`;
       return true;
     } catch (error) {
-      this.logger.error('Health check failed', error);
+      this.logger.error('Health check failed', error as Error);
       return false;
     }
   }
@@ -274,7 +242,7 @@ export class DatabaseConnection {
       this.retryCount = 0;
       await this.initializeConnection();
     } catch (error) {
-      this.logger.error('Reconnection failed', error);
+      this.logger.error('Reconnection failed', error as Error);
       throw error;
     }
   }
@@ -317,7 +285,7 @@ export class DatabaseConnection {
       this.logger.info('Transaction completed successfully');
       return result;
     } catch (error) {
-      this.logger.error('Transaction failed', error);
+      this.logger.error('Transaction failed', error as Error);
       throw error;
     }
   }
@@ -334,7 +302,7 @@ export class DatabaseConnection {
       this.logger.debug(`Executing raw query: ${query}`);
       return await this.prisma.$queryRawUnsafe(query, ...values);
     } catch (error) {
-      this.logger.error('Raw query execution failed', error);
+      this.logger.error('Raw query execution failed', error as Error);
       throw error;
     }
   }
@@ -388,7 +356,7 @@ export class DatabaseConnection {
       this.status = ConnectionStatus.DISCONNECTED;
       this.logger.info('Database connection closed');
     } catch (error) {
-      this.logger.error('Error during disconnect', error);
+      this.logger.error('Error during disconnect', error as Error);
       throw error;
     }
   }
