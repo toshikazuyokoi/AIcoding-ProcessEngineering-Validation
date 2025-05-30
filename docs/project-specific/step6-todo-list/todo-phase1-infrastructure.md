@@ -13,11 +13,11 @@
 
 Phase 1「Infrastructure Layer」の詳細ToDoリストです。データベース接続、基盤ユーティリティ、リポジトリ層など、インフラストラクチャ層の全20タスクを階層構造チェックボックス形式で管理します。
 
-## Phase 1 進捗: [█████░░░░░] 25% (5/20タスク完了)
+## Phase 1 進捗: [██████░░░░] 30% (6/20タスク完了)
 
 ---
 
-## 1.1 基盤ユーティリティ [██████████] 83.3% (5/6タスク完了)
+## 1.1 基盤ユーティリティ [██████████] 100% (6/6タスク完了)
 
 ### 1.1.1 データベース・ログ基盤
 - [x] **TSK-029-INF-DatabaseConnection**: backend/src/utils/database-connection.ts作成・検証 ✅ **完了**
@@ -130,13 +130,13 @@ Phase 1「Infrastructure Layer」の詳細ToDoリストです。データベー�
   - [x] ToDoチェック ✅
   - [x] Issueクローズ ✅
 
-- [ ] **TSK-034-INF-CacheService**: backend/src/utils/cache-service.ts作成・検証
-  - [ ] 仕様確認・設計理解
-  - [ ] コーディング
-  - [ ] テストコーディング
-  - [ ] 単体テスト実行
-  - [ ] リポジトリコミット
-  - [ ] ToDoチェック
+- [x] **TSK-034-INF-CacheService**: backend/src/utils/cache-service.ts作成・検証 ✅ **完了**
+  - [x] 仕様確認・設計理解 ✅
+  - [x] コーディング ✅
+  - [x] テストコーディング ✅
+  - [x] 単体テスト実行 ✅
+  - [x] リポジトリコミット ✅
+  - [x] ToDoチェック ✅
   - [ ] Issueクローズ
 
 ---
