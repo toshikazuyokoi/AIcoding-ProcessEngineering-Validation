@@ -160,7 +160,7 @@ Phase 1「Infrastructure Layer」の詳細ToDoリストです。データベー�
   - [x] 単体テスト実行 ✅
   - [x] リポジトリコミット ✅
   - [x] ToDoチェック ✅
-  - [ ] Issueクローズ
+  - [x] Issueクローズ ✅
 
 - [ ] **TSK-037-CFG-Environment**: backend/config/environment.ts作成・検証
   - [ ] 仕様確認・設計理解
