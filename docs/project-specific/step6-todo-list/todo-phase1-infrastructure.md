@@ -85,7 +85,7 @@ Phase 1「Infrastructure Layer」の詳細ToDoリストです。データベー�
   - [x] 単体テスト実行 ✅
   - [x] リポジトリコミット ✅
   - [x] ToDoチェック ✅
-  - [ ] Issueクローズ
+  - [x] Issueクローズ ✅
 
 ### 1.1.2 セキュリティ・キャッシュ
 - [ ] **TSK-032-INF-PasswordHasher**: backend/src/utils/password-hasher.ts作成・検証
