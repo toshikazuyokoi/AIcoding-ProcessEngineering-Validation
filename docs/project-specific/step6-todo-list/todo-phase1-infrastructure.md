@@ -193,7 +193,7 @@ Phase 1「Infrastructure Layer」の詳細ToDoリストです。データベー�
   - [x] 単体テスト実行 ✅
   - [x] リポジトリコミット ✅
   - [x] ToDoチェック ✅
-  - [ ] Issueクローズ
+  - [x] Issueクローズ ✅
 
 - [ ] **TSK-050-ENV-frontend-env-example**: frontend/.env.example作成・検証
   - [ ] 仕様確認・設計理解
