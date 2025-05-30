@@ -213,7 +213,7 @@ Phase 1「Infrastructure Layer」の詳細ToDoリストです。データベー�
   - [x] 単体テスト実行 ✅
   - [x] リポジトリコミット ✅
   - [x] ToDoチェック ✅
-  - [ ] Issueクローズ
+  - [x] Issueクローズ ✅
 
 ### 1.2.3 プロジェクト設定
 - [ ] **TSK-038-ENV-backend-package**: backend/package.json作成・検証
