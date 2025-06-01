@@ -111,6 +111,7 @@
 - **Phase別優先度実装**: Critical→High→Medium→Low順序
 - **品質保証統合**: GitHub Issue + Issue仕様書 + 95%テストカバレッジ
 - **進捗可視化**: GitHub Issues + Memory Bank連携による完全トレーサビリティ
+- **標準サイクル**: 実装→テスト→コミット→TODOリスト更新→Issueクローズ→TODOリストコミット→メモリバンク更新
 
 ## 📊 Issue仕様書完成状況（最終確認済み）
 
