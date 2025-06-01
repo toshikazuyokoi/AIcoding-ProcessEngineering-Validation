@@ -231,11 +231,11 @@
 
 ## 🎯 Issue駆動STEP 7実行計画（次回作業）
 
-### 進行中実行項目（Issue #95完了・継続実装）
+### 進行中実行項目（Issue #95・#96完了・継続実装）
 1. **Phase 1実装継続**（Critical Priority・GitHub Issue駆動）
    - ✅ Issue #95: [TSK-001-CFG-Environment] Environment Variables Configuration Implementation **COMPLETED**
-   - 📋 Issue #96: [TSK-002-DB-Schema] Database Schema Definition Implementation **次タスク**
-   - 📋 Issue #97: [TSK-003-CFG-Database] SQLite Configuration Implementation
+   - ✅ Issue #96: [TSK-002-DB-Schema] Database Schema Definition Implementation **COMPLETED**
+   - 📋 Issue #97: [TSK-003-CFG-Database] SQLite Configuration Implementation **次タスク**
    - 📋 Issue #98: [TSK-004-DAL-Connection] Database Connection & Health Check Implementation
    - 📋 Issue #99: [TSK-005-CFG-Logger] Migration & Schema Update Implementation
    - 📋 Issue #100: [TSK-006-CFG-Validation] Express.js Configuration & Middleware Foundation Implementation
