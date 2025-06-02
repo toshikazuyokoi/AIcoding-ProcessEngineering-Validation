@@ -13,7 +13,7 @@
 
 Phase 1「Infrastructure Layer」の詳細ToDoリストです。データベース接続、基盤ユーティリティ、リポジトリ層など、インフラストラクチャ層の全22タスクを階層構造チェックボックス形式で管理します。
 
-## Phase 1 進捗: [█████████████] 72.7% (16/22タスク完了)
+## Phase 1 進捗: [██████████████] 77.3% (17/22タスク完了)
 
 ---
 
@@ -260,7 +260,7 @@ Phase 1「Infrastructure Layer」の詳細ToDoリストです。データベー�
 
 ---
 
-## 1.3 リポジトリ層 [██████░░░░] 75% (3/4タスク完了)
+## 1.3 リポジトリ層 [██████████] 100% (4/4タスク完了)
 
 ### 1.3.1 基盤リポジトリ
 - [x] **TSK-043-REP-BaseRepository**: backend/src/repositories/base-repository.ts作成・検証 ✅ **完了**
@@ -327,14 +327,14 @@ Phase 1「Infrastructure Layer」の詳細ToDoリストです。データベー�
   - [x] ToDoチェック ✅
   - [x] Issueクローズ ✅
 
-- [ ] **TSK-042-REP-CategoryRepository**: backend/src/repositories/category-repository.ts作成・検証
-  - [ ] 仕様確認・設計理解
-  - [ ] コーディング
-  - [ ] テストコーディング
-  - [ ] 単体テスト実行
-  - [ ] リポジトリコミット
-  - [ ] ToDoチェック
-  - [ ] Issueクローズ
+- [x] **TSK-042-REP-CategoryRepository**: backend/src/repositories/category-repository.ts作成・検証 ✅ **完了**
+  - [x] 仕様確認・設計理解 ✅
+  - [x] コーディング ✅
+  - [x] テストコーディング ✅
+  - [x] 単体テスト実行 ✅
+  - [x] リポジトリコミット ✅
+  - [x] ToDoチェック ✅
+  - [x] Issueクローズ ✅
 
 ---
 
