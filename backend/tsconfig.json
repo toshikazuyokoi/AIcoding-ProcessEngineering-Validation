@@ -41,13 +41,12 @@
   "include": [
     "src/**/*",
     "config/**/*",
-    "tests/**/*"
+    "__tests__/**/*"
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "coverage",
-    "**/*.test.ts"
+    "coverage"
   ],
   "ts-node": {
     "esm": false,
