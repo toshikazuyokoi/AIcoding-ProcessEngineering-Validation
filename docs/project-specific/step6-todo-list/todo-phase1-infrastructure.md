@@ -6,14 +6,14 @@
 | ドキュメントID | TODO-PHASE1-001 |
 | 関連文書 | TODO-001, TASK-PHASE1-001 |
 | 作成日 | 2025-01-28 |
-| 最終更新日 | 2025-01-30 |
+| 最終更新日 | 2025-01-31 |
 | 作成者 | Augment Agent |
 
 ## 概要
 
 Phase 1「Infrastructure Layer」の詳細ToDoリストです。データベース接続、基盤ユーティリティ、リポジトリ層など、インフラストラクチャ層の全22タスクを階層構造チェックボックス形式で管理します。
 
-## Phase 1 進捗: [████████░░] 50.0% (11/22タスク完了)
+## Phase 1 進捗: [█████████░] 54.5% (12/22タスク完了)
 
 ---
 
@@ -141,7 +141,7 @@ Phase 1「Infrastructure Layer」の詳細ToDoリストです。データベー�
 
 ---
 
-## 1.2 設定・環境管理 [███████░░░] 71.4% (5/7タスク完了)
+## 1.2 設定・環境管理 [████████░░] 85.7% (6/7タスク完了)
 
 ### 1.2.1 設定ファイル設定
 - [x] **TSK-035-CFG-Database**: backend/config/database.ts作成・検証 ✅ **完了**
@@ -216,16 +216,28 @@ Phase 1「Infrastructure Layer」の詳細ToDoリストです。データベー�
   - [x] Issueクローズ ✅
 
 ### 1.2.3 プロジェクト設定
-- [ ] **TSK-038-ENV-backend-package**: backend/package.json作成・検証
-  - [ ] 仕様確認・設計理解
-  - [ ] コーディング
-  - [ ] テストコーディング
-  - [ ] 単体テスト実行
-  - [ ] リポジトリコミット
-  - [ ] ToDoチェック
-  - [ ] Issueクローズ
+- [x] **TSK-039-ENV-backend-package**: backend/package.json作成・検証 ✅ **完了**
+  - [x] 仕様確認・設計理解 ✅
+    - [x] package.json設定要件の確認
+    - [x] 依存関係管理の理解
+    - [x] スクリプト設定の確認
+    - [x] Jest設定の理解
+  - [x] コーディング ✅
+    - [x] 本番依存関係の設定
+    - [x] 開発依存関係の設定
+    - [x] スクリプト設定の実装
+    - [x] Jest設定の実装
+  - [x] テストコーディング ✅
+    - [x] package.json構造検証テスト
+    - [x] 依存関係検証テスト
+    - [x] スクリプト設定テスト
+    - [x] Jest設定テスト
+  - [x] 単体テスト実行 ✅
+  - [x] リポジトリコミット ✅
+  - [x] ToDoチェック ✅
+  - [x] Issueクローズ ✅
 
-- [ ] **TSK-039-ENV-backend-tsconfig**: backend/tsconfig.json作成・検証
+- [ ] **TSK-074-ENV-backend-tsconfig**: backend/tsconfig.json作成・検証
   - [ ] 仕様確認・設計理解
   - [ ] コーディング
   - [ ] テストコーディング
