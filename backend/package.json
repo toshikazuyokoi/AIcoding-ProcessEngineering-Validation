@@ -90,44 +90,6 @@
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.3.3"
   },
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node",
-    "roots": [
-      "<rootDir>/src",
-      "<rootDir>/config",
-      "<rootDir>/__tests__"
-    ],
-    "testMatch": [
-      "**/__tests__/**/*.test.ts"
-    ],
-    "moduleNameMapper": {
-      "^@/(.*)$": "<rootDir>/src/$1"
-    },
-    "collectCoverageFrom": [
-      "src/**/*.ts",
-      "config/**/*.ts",
-      "!src/**/*.d.ts",
-      "!config/**/*.d.ts",
-      "!src/**/__tests__/**",
-      "!config/**/__tests__/**",
-      "!__tests__/**",
-      "!src/index.ts",
-      "!src/**/*.interface.ts",
-      "!src/**/*.type.ts"
-    ],
-    "coverageDirectory": "coverage",
-    "coverageReporters": [
-      "text",
-      "lcov",
-      "html",
-      "json"
-    ],
-    "testTimeout": 30000,
-    "verbose": true,
-    "detectOpenHandles": true,
-    "forceExit": true
-  },
   "keywords": [
     "task-management",
     "backend",
