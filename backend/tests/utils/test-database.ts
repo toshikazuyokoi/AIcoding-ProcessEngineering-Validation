@@ -9,7 +9,7 @@
  * @since 2025-02-01
  */
 
-import { PrismaClient, TaskPriority, TaskStatus } from '@prisma/client';
+import { PrismaClient, TaskPriority, TaskStatus, UserRole } from '@prisma/client';
 import { DatabaseConnection } from '../../src/utils/database-connection';
 
 // ===================================
@@ -185,36 +185,30 @@ export class TestDatabaseManager {
 
     try {
       const tablesToClean = options.tables || [
-        'TaskCategory',
-        'Task',
-        'Category',
-        'User'
+        'task_categories',
+        'tasks',
+        'categories',
+        'users'
       ];
 
-      // Disable foreign key checks temporarily
-      await this.prisma.$executeRaw`SET FOREIGN_KEY_CHECKS = 0`;
-
-      // Clean tables in reverse dependency order
-      for (const table of tablesToClean.reverse()) {
+      // Clean tables in reverse dependency order (PostgreSQL)
+      for (const table of tablesToClean) {
         if (options.preserveRecords && options.preserveRecords[table]) {
           // Preserve specific records
-          const preserveIds = options.preserveRecords[table].map(record => record.id);
+          const preserveIds = options.preserveRecords[table].map(record => `'${record.id}'`);
           await this.prisma.$executeRawUnsafe(
-            `DELETE FROM ${table} WHERE id NOT IN (${preserveIds.map(() => '?').join(',')})`
+            `DELETE FROM ${table} WHERE id NOT IN (${preserveIds.join(',')})`
           );
         } else {
           // Clean all records
           await this.prisma.$executeRawUnsafe(`DELETE FROM ${table}`);
         }
 
-        // Reset auto-increment sequences if requested
-        if (options.resetSequences) {
-          await this.prisma.$executeRawUnsafe(`ALTER TABLE ${table} AUTO_INCREMENT = 1`);
+        // Reset sequences if requested (PostgreSQL)
+        if (options.resetSequences && table !== 'task_categories') {
+          await this.prisma.$executeRawUnsafe(`ALTER SEQUENCE ${table}_id_seq RESTART WITH 1`);
         }
       }
-
-      // Re-enable foreign key checks
-      await this.prisma.$executeRaw`SET FOREIGN_KEY_CHECKS = 1`;
 
       console.log('✅ Test database cleaned successfully');
 
@@ -270,13 +264,11 @@ export class TestDatabaseManager {
     const users = [];
     for (let i = 1; i <= count; i++) {
       users.push({
-        id: `test-user-${i}`,
         email: `testuser${i}@example.com`,
         username: `testuser${i}`,
-        name: `Test User ${i}`,
-        passwordHash: 'test_password_hash',
-        createdAt: new Date(),
-        updatedAt: new Date()
+        passwordHash: '$2b$10$test.password.hash.for.testing.only',
+        role: i === 1 ? UserRole.admin : UserRole.user,
+        isActive: true
       });
     }
 
@@ -292,14 +284,12 @@ export class TestDatabaseManager {
   private async seedCategories(count: number): Promise<void> {
     const categories = [];
     const colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF'];
-    
+
     for (let i = 1; i <= count; i++) {
       categories.push({
-        id: `test-category-${i}`,
         name: `Test Category ${i}`,
         color: colors[(i - 1) % colors.length],
-        description: `Test category ${i} description`,
-        createdAt: new Date()
+        description: `Test category ${i} description`
       });
     }
 
@@ -313,21 +303,31 @@ export class TestDatabaseManager {
    * Seed test tasks
    */
   private async seedTasks(count: number): Promise<void> {
+    // First, get existing users to reference
+    const users = await this.prisma!.user.findMany({ take: count });
+    if (users.length === 0) {
+      console.warn('No users found for task seeding. Seeding users first.');
+      await this.seedUsers(count);
+      const newUsers = await this.prisma!.user.findMany({ take: count });
+      if (newUsers.length === 0) {
+        throw new Error('Failed to create users for task seeding');
+      }
+    }
+
     const tasks = [];
     const statuses: TaskStatus[] = [TaskStatus.pending, TaskStatus.in_progress, TaskStatus.completed];
     const priorities: TaskPriority[] = [TaskPriority.low, TaskPriority.medium, TaskPriority.high];
+    const availableUsers = await this.prisma!.user.findMany({ take: count });
 
     for (let i = 1; i <= count; i++) {
+      const user = availableUsers[(i - 1) % availableUsers.length];
       tasks.push({
-        id: `test-task-${i}`,
-        userId: `test-user-${((i - 1) % 3) + 1}`,
+        userId: user.id,
         title: `Test Task ${i}`,
         description: `Test task ${i} description`,
         status: statuses[(i - 1) % statuses.length],
         priority: priorities[(i - 1) % priorities.length],
-        dueDate: new Date(Date.now() + (i * 24 * 60 * 60 * 1000)),
-        createdAt: new Date(),
-        updatedAt: new Date()
+        dueDate: new Date(Date.now() + (i * 24 * 60 * 60 * 1000))
       });
     }
 

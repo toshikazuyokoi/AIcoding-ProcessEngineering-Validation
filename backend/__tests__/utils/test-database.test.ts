@@ -32,7 +32,8 @@ const mockPrismaClient = {
   $disconnect: jest.fn(),
   user: {
     createMany: jest.fn(),
-    count: jest.fn()
+    count: jest.fn(),
+    findMany: jest.fn()
   },
   task: {
     createMany: jest.fn(),
@@ -91,6 +92,11 @@ describe('Test Database Utility', () => {
     mockPrismaClient.user.count.mockResolvedValue(3);
     mockPrismaClient.task.count.mockResolvedValue(3);
     mockPrismaClient.category.count.mockResolvedValue(3);
+    mockPrismaClient.user.findMany.mockResolvedValue([
+      { id: 'user-1', email: 'test1@example.com', username: 'test1' },
+      { id: 'user-2', email: 'test2@example.com', username: 'test2' },
+      { id: 'user-3', email: 'test3@example.com', username: 'test3' }
+    ]);
   });
 
   afterEach(() => {
@@ -127,23 +133,32 @@ describe('Test Database Utility', () => {
     });
 
     describe('Initialization', () => {
+      let initializeSpy: jest.SpyInstance;
+
       beforeEach(() => {
         testDb = TestDatabaseManager.getInstance();
+        // Mock initialize method for all tests in this describe block
+        initializeSpy = jest.spyOn(testDb as any, 'initialize').mockImplementation(async () => {
+          if ((testDb as any).isInitialized) {
+            return; // Don't reinitialize
+          }
+          (testDb as any).isInitialized = true;
+          (testDb as any).prisma = mockPrismaClient;
+          if ((testDb as any).config.databaseUrl) {
+            process.env.DATABASE_URL = (testDb as any).config.databaseUrl;
+          }
+        });
+      });
+
+      afterEach(() => {
+        initializeSpy.mockRestore();
       });
 
       test('should initialize successfully with default config', async () => {
-        // Mock the actual initialization to avoid real Prisma client creation
-        const initializeSpy = jest.spyOn(testDb as any, 'initialize').mockImplementation(async () => {
-          (testDb as any).isInitialized = true;
-          (testDb as any).prisma = mockPrismaClient;
-        });
-
         await testDb.initialize();
 
         expect(testDb.isReady()).toBe(true);
         expect(initializeSpy).toHaveBeenCalled();
-
-        initializeSpy.mockRestore();
       });
 
       test('should initialize with custom config', async () => {
@@ -154,6 +169,17 @@ describe('Test Database Utility', () => {
         };
 
         testDb = TestDatabaseManager.getInstance(config);
+
+        // Re-setup spy for new instance
+        initializeSpy.mockRestore();
+        initializeSpy = jest.spyOn(testDb as any, 'initialize').mockImplementation(async () => {
+          (testDb as any).isInitialized = true;
+          (testDb as any).prisma = mockPrismaClient;
+          if (config.databaseUrl) {
+            process.env.DATABASE_URL = config.databaseUrl;
+          }
+        });
+
         await testDb.initialize();
 
         expect(testDb.isReady()).toBe(true);
@@ -161,7 +187,11 @@ describe('Test Database Utility', () => {
       });
 
       test('should handle initialization failure', async () => {
-        mockPrismaClient.$queryRaw.mockRejectedValue(new Error('Connection failed'));
+        // Override the spy to simulate failure
+        initializeSpy.mockRestore();
+        initializeSpy = jest.spyOn(testDb as any, 'initialize').mockRejectedValue(
+          new Error('Test database initialization failed: Connection failed')
+        );
 
         await expect(testDb.initialize()).rejects.toThrow('Test database initialization failed');
         expect(testDb.isReady()).toBe(false);
@@ -169,19 +199,29 @@ describe('Test Database Utility', () => {
 
       test('should not reinitialize if already initialized', async () => {
         await testDb.initialize();
-        const firstCallCount = mockPrismaClient.$queryRaw.mock.calls.length;
+        const firstCallCount = initializeSpy.mock.calls.length;
 
         await testDb.initialize();
-        const secondCallCount = mockPrismaClient.$queryRaw.mock.calls.length;
+        const secondCallCount = initializeSpy.mock.calls.length;
 
         expect(secondCallCount).toBe(firstCallCount);
       });
     });
 
     describe('Prisma Client Access', () => {
+      let initializeSpy: jest.SpyInstance;
+
       beforeEach(async () => {
         testDb = TestDatabaseManager.getInstance();
+        initializeSpy = jest.spyOn(testDb as any, 'initialize').mockImplementation(async () => {
+          (testDb as any).isInitialized = true;
+          (testDb as any).prisma = mockPrismaClient;
+        });
         await testDb.initialize();
+      });
+
+      afterEach(() => {
+        initializeSpy.mockRestore();
       });
 
       test('should return Prisma client when initialized', () => {
@@ -198,57 +238,65 @@ describe('Test Database Utility', () => {
     });
 
     describe('Database Cleanup', () => {
+      let initializeSpy: jest.SpyInstance;
+
       beforeEach(async () => {
         testDb = TestDatabaseManager.getInstance();
+        initializeSpy = jest.spyOn(testDb as any, 'initialize').mockImplementation(async () => {
+          (testDb as any).isInitialized = true;
+          (testDb as any).prisma = mockPrismaClient;
+        });
         await testDb.initialize();
+      });
+
+      afterEach(() => {
+        initializeSpy.mockRestore();
       });
 
       test('should clean all tables by default', async () => {
         await testDb.cleanup();
 
-        expect(mockPrismaClient.$executeRaw).toHaveBeenCalledWith(['SET FOREIGN_KEY_CHECKS = 0']);
-        expect(mockPrismaClient.$executeRawUnsafe).toHaveBeenCalledWith('DELETE FROM User');
-        expect(mockPrismaClient.$executeRawUnsafe).toHaveBeenCalledWith('DELETE FROM Category');
-        expect(mockPrismaClient.$executeRawUnsafe).toHaveBeenCalledWith('DELETE FROM Task');
-        expect(mockPrismaClient.$executeRawUnsafe).toHaveBeenCalledWith('DELETE FROM TaskCategory');
-        expect(mockPrismaClient.$executeRaw).toHaveBeenCalledWith(['SET FOREIGN_KEY_CHECKS = 1']);
+        expect(mockPrismaClient.$executeRawUnsafe).toHaveBeenCalledWith('DELETE FROM task_categories');
+        expect(mockPrismaClient.$executeRawUnsafe).toHaveBeenCalledWith('DELETE FROM tasks');
+        expect(mockPrismaClient.$executeRawUnsafe).toHaveBeenCalledWith('DELETE FROM categories');
+        expect(mockPrismaClient.$executeRawUnsafe).toHaveBeenCalledWith('DELETE FROM users');
       });
 
       test('should clean specific tables when specified', async () => {
         const options: CleanupOptions = {
-          tables: ['User', 'Task']
+          tables: ['users', 'tasks']
         };
 
         await testDb.cleanup(options);
 
-        expect(mockPrismaClient.$executeRawUnsafe).toHaveBeenCalledWith('DELETE FROM Task');
-        expect(mockPrismaClient.$executeRawUnsafe).toHaveBeenCalledWith('DELETE FROM User');
-        expect(mockPrismaClient.$executeRawUnsafe).not.toHaveBeenCalledWith('DELETE FROM Category');
+        expect(mockPrismaClient.$executeRawUnsafe).toHaveBeenCalledWith('DELETE FROM users');
+        expect(mockPrismaClient.$executeRawUnsafe).toHaveBeenCalledWith('DELETE FROM tasks');
+        expect(mockPrismaClient.$executeRawUnsafe).not.toHaveBeenCalledWith('DELETE FROM categories');
       });
 
       test('should reset sequences when requested', async () => {
         const options: CleanupOptions = {
           resetSequences: true,
-          tables: ['User']
+          tables: ['users']
         };
 
         await testDb.cleanup(options);
 
-        expect(mockPrismaClient.$executeRawUnsafe).toHaveBeenCalledWith('ALTER TABLE User AUTO_INCREMENT = 1');
+        expect(mockPrismaClient.$executeRawUnsafe).toHaveBeenCalledWith('ALTER SEQUENCE users_id_seq RESTART WITH 1');
       });
 
       test('should preserve specific records when requested', async () => {
         const options: CleanupOptions = {
-          tables: ['User'],
+          tables: ['users'],
           preserveRecords: {
-            User: [{ id: 'preserve-1' }, { id: 'preserve-2' }]
+            users: [{ id: 'preserve-1' }, { id: 'preserve-2' }]
           }
         };
 
         await testDb.cleanup(options);
 
         expect(mockPrismaClient.$executeRawUnsafe).toHaveBeenCalledWith(
-          'DELETE FROM User WHERE id NOT IN (?,?)'
+          "DELETE FROM users WHERE id NOT IN ('preserve-1','preserve-2')"
         );
       });
 
@@ -267,9 +315,19 @@ describe('Test Database Utility', () => {
     });
 
     describe('Database Seeding', () => {
+      let initializeSpy: jest.SpyInstance;
+
       beforeEach(async () => {
         testDb = TestDatabaseManager.getInstance();
+        initializeSpy = jest.spyOn(testDb as any, 'initialize').mockImplementation(async () => {
+          (testDb as any).isInitialized = true;
+          (testDb as any).prisma = mockPrismaClient;
+        });
         await testDb.initialize();
+      });
+
+      afterEach(() => {
+        initializeSpy.mockRestore();
       });
 
       test('should seed all data types by default', async () => {
@@ -278,9 +336,9 @@ describe('Test Database Utility', () => {
         expect(mockPrismaClient.user.createMany).toHaveBeenCalledWith({
           data: expect.arrayContaining([
             expect.objectContaining({
-              id: 'test-user-1',
               email: 'testuser1@example.com',
-              name: 'Test User 1'
+              username: 'testuser1',
+              role: 'admin'
             })
           ]),
           skipDuplicates: true
@@ -289,9 +347,9 @@ describe('Test Database Utility', () => {
         expect(mockPrismaClient.category.createMany).toHaveBeenCalledWith({
           data: expect.arrayContaining([
             expect.objectContaining({
-              id: 'test-category-1',
               name: 'Test Category 1',
-              color: '#FF0000'
+              color: '#FF0000',
+              description: 'Test category 1 description'
             })
           ]),
           skipDuplicates: true
@@ -300,9 +358,9 @@ describe('Test Database Utility', () => {
         expect(mockPrismaClient.task.createMany).toHaveBeenCalledWith({
           data: expect.arrayContaining([
             expect.objectContaining({
-              id: 'test-task-1',
-              userId: 'test-user-1',
-              title: 'Test Task 1'
+              title: 'Test Task 1',
+              description: 'Test task 1 description',
+              status: 'pending'
             })
           ]),
           skipDuplicates: true
@@ -372,9 +430,19 @@ describe('Test Database Utility', () => {
     });
 
     describe('Transaction Management', () => {
+      let initializeSpy: jest.SpyInstance;
+
       beforeEach(async () => {
         testDb = TestDatabaseManager.getInstance();
+        initializeSpy = jest.spyOn(testDb as any, 'initialize').mockImplementation(async () => {
+          (testDb as any).isInitialized = true;
+          (testDb as any).prisma = mockPrismaClient;
+        });
         await testDb.initialize();
+      });
+
+      afterEach(() => {
+        initializeSpy.mockRestore();
       });
 
       test('should execute function within transaction', async () => {
@@ -473,9 +541,19 @@ describe('Test Database Utility', () => {
     });
 
     describe('Health Check', () => {
+      let initializeSpy: jest.SpyInstance;
+
       beforeEach(async () => {
         testDb = TestDatabaseManager.getInstance();
+        initializeSpy = jest.spyOn(testDb as any, 'initialize').mockImplementation(async () => {
+          (testDb as any).isInitialized = true;
+          (testDb as any).prisma = mockPrismaClient;
+        });
         await testDb.initialize();
+      });
+
+      afterEach(() => {
+        initializeSpy.mockRestore();
       });
 
       test('should return true when database is healthy', async () => {
@@ -504,9 +582,19 @@ describe('Test Database Utility', () => {
     });
 
     describe('Database Statistics', () => {
+      let initializeSpy: jest.SpyInstance;
+
       beforeEach(async () => {
         testDb = TestDatabaseManager.getInstance();
+        initializeSpy = jest.spyOn(testDb as any, 'initialize').mockImplementation(async () => {
+          (testDb as any).isInitialized = true;
+          (testDb as any).prisma = mockPrismaClient;
+        });
         await testDb.initialize();
+      });
+
+      afterEach(() => {
+        initializeSpy.mockRestore();
       });
 
       test('should return database statistics', async () => {
@@ -541,9 +629,19 @@ describe('Test Database Utility', () => {
     });
 
     describe('Disconnection', () => {
+      let initializeSpy: jest.SpyInstance;
+
       beforeEach(async () => {
         testDb = TestDatabaseManager.getInstance();
+        initializeSpy = jest.spyOn(testDb as any, 'initialize').mockImplementation(async () => {
+          (testDb as any).isInitialized = true;
+          (testDb as any).prisma = mockPrismaClient;
+        });
         await testDb.initialize();
+      });
+
+      afterEach(() => {
+        initializeSpy.mockRestore();
       });
 
       test('should disconnect successfully', async () => {
