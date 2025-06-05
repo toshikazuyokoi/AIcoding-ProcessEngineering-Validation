@@ -13,7 +13,7 @@
 
 Phase 1「Infrastructure Layer」の詳細ToDoリストです。データベース接続、基盤ユーティリティ、リポジトリ層、データベースマイグレーションなど、インフラストラクチャ層の全25タスクを階層構造チェックボックス形式で管理します。
 
-## Phase 1 進捗: [██████████████████] 88.0% (22/25タスク完了)
+## Phase 1 進捗: [██████████████████] 92.0% (23/25タスク完了)
 
 ---
 
@@ -406,7 +406,7 @@ Phase 1「Infrastructure Layer」の詳細ToDoリストです。データベー�
   - [x] ToDoチェック ✅
   - [x] Issueクローズ ✅
 
-## 1.5 テスト設定・ユーティリティ [████░░░░░░] 40% (2/5タスク完了)
+## 1.5 テスト設定・ユーティリティ [██████░░░░] 60% (3/5タスク完了)
 
 ### 1.5.1 テスト環境設定
 - [x] **TSK-044-ENV-jest-config**: backend/jest.config.js作成・検証 ✅ **完了**
@@ -437,13 +437,13 @@ Phase 1「Infrastructure Layer」の詳細ToDoリストです。データベー�
   - [x] ToDoチェック ✅
   - [x] Issueクローズ ✅
 
-- [ ] **TSK-047-TST-MockServices**: backend/tests/mocks/mock-services.ts作成・検証
-  - [ ] 仕様確認・設計理解
-  - [ ] コーディング
-  - [ ] テストコーディング
-  - [ ] 単体テスト実行
-  - [ ] リポジトリコミット
-  - [ ] ToDoチェック
+- [x] **TSK-047-TST-MockServices**: backend/tests/mocks/mock-services.ts作成・検証 ✅
+  - [x] 仕様確認・設計理解 ✅
+  - [x] コーディング ✅
+  - [x] テストコーディング ✅
+  - [x] 単体テスト実行 ✅
+  - [x] リポジトリコミット ✅
+  - [x] ToDoチェック ✅
   - [ ] Issueクローズ
 
 - [ ] **TSK-048-ENV-eslint-config**: backend/.eslintrc.js作成・検証
