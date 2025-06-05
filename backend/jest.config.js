@@ -30,7 +30,8 @@ module.exports = {
   roots: [
     '<rootDir>/src',
     '<rootDir>/config',
-    '<rootDir>/__tests__'
+    '<rootDir>/__tests__',
+    '<rootDir>/tests'
   ],
   
   /**
@@ -93,7 +94,8 @@ module.exports = {
     'node_modules',
     '<rootDir>/src',
     '<rootDir>/config',
-    '<rootDir>/__tests__'
+    '<rootDir>/__tests__',
+    '<rootDir>/tests'
   ],
   
   // ===================================
