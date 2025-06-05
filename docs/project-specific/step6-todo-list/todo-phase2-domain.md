@@ -39,7 +39,7 @@ Phase 2「Domain Layer」の詳細ToDoリストです。エンティティ、ド
   - [x] 単体テスト実行 ✅
   - [x] リポジトリコミット ✅
   - [x] ToDoチェック ✅
-  - [ ] Issueクローズ
+  - [x] Issueクローズ ✅
 
 ### 2.1.2 コアエンティティ
 - [ ] **TSK-049-ENT-User**: backend/src/domain/entities/user.entity.ts作成・検証
