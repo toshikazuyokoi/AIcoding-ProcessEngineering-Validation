@@ -277,7 +277,7 @@ Phase 2「Domain Layer」の詳細ToDoリストです。エンティティ、ド
   - [x] 単体テスト実行 ✅
   - [x] リポジトリコミット ✅
   - [x] ToDoチェック ✅
-  - [ ] Issueクローズ
+  - [x] Issueクローズ ✅
 
 - [ ] **TSK-060-TYP-TaskTypes**: backend/src/domain/types/task.types.ts作成・検証
   - [ ] 仕様確認・設計理解
