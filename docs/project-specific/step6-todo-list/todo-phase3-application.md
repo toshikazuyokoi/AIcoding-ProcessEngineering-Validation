@@ -39,7 +39,7 @@ Phase 3「Application Layer」の詳細ToDoリストです。コントローラ�
   - [x] 単体テスト実行 ✅
   - [x] リポジトリコミット ✅
   - [x] ToDoチェック ✅
-  - [ ] Issueクローズ
+  - [x] Issueクローズ ✅
 
 ### 3.1.2 レスポンス・リクエスト処理
 - [ ] **TSK-065-UTL-ResponseBuilder**: backend/src/utils/response-builder.ts作成・検証
