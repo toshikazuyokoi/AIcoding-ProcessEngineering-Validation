@@ -13,7 +13,7 @@
 
 Phase 2「Domain Layer」の詳細ToDoリストです。エンティティ、ドメインサービス、ビジネスロジックなど、ドメイン層の全15タスクを階層構造チェックボックス形式で管理します。
 
-## Phase 2 進捗: [███████░░░] 46.7% (7/15タスク完了)
+## Phase 2 進捗: [████████░░] 53.3% (8/15タスク完了)
 
 ---
 
@@ -139,7 +139,7 @@ Phase 2「Domain Layer」の詳細ToDoリストです。エンティティ、ド
 
 ---
 
-## 2.2 ドメインサービス [█████░░░░░] 50.0% (3/6タスク完了)
+## 2.2 ドメインサービス [███████░░░] 66.7% (4/6タスク完了)
 
 ### 2.2.1 コアサービス
 - [x] **TSK-053-SVC-AuthService**: backend/src/domain/services/auth-service.ts作成・検証 ✅
@@ -238,13 +238,13 @@ Phase 2「Domain Layer」の詳細ToDoリストです。エンティティ、ド
   - [x] ToDoチェック ✅
   - [x] Issueクローズ ✅
 
-- [ ] **TSK-056-SVC-CategoryService**: backend/src/domain/services/category-service.ts作成・検証
-  - [ ] 仕様確認・設計理解
-  - [ ] コーディング
-  - [ ] テストコーディング
-  - [ ] 単体テスト実行
-  - [ ] リポジトリコミット
-  - [ ] ToDoチェック
+- [x] **TSK-056-SVC-CategoryService**: backend/src/domain/services/category-service.ts作成・検証 ✅
+  - [x] 仕様確認・設計理解 ✅
+  - [x] コーディング ✅
+  - [x] テストコーディング ✅
+  - [x] 単体テスト実行 ✅
+  - [x] リポジトリコミット ✅
+  - [x] ToDoチェック ✅
   - [ ] Issueクローズ
 
 - [ ] **TSK-057-SVC-EmailService**: backend/src/domain/services/email-service.ts作成・検証
