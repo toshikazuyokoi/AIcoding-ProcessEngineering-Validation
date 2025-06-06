@@ -6,7 +6,7 @@
 | ドキュメントID | TODO-PHASE3-001 |
 | 関連文書 | TODO-001, TASK-PHASE3-001 |
 | 作成日 | 2025-01-28 |
-| 最終更新日 | 2025-01-28 |
+| 最終更新日 | 2025-02-01 |
 | 作成者 | Augment Agent |
 
 ## 概要
@@ -49,7 +49,7 @@ Phase 3「Application Layer」の詳細ToDoリストです。コントローラ�
   - [x] 単体テスト実行 ✅
   - [x] リポジトリコミット ✅
   - [x] ToDoチェック ✅
-  - [ ] Issueクローズ
+  - [x] Issueクローズ ✅
 
 - [ ] **TSK-066-UTL-RequestValidator**: backend/src/utils/request-validator.ts作成・検証
   - [ ] 仕様確認・設計理解
