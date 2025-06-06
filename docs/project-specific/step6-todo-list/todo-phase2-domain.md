@@ -295,7 +295,7 @@ Phase 2「Domain Layer」の詳細ToDoリストです。エンティティ、ド
   - [x] 単体テスト実行 ✅
   - [x] リポジトリコミット ✅
   - [x] ToDoチェック ✅
-  - [ ] Issueクローズ
+  - [x] Issueクローズ ✅
 
 ### 2.3.2 共通型・インターフェース
 - [ ] **TSK-062-TYP-CommonTypes**: backend/src/domain/types/common.types.ts作成・検証
