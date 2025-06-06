@@ -13,11 +13,11 @@
 
 Phase 3「Application Layer」の詳細ToDoリストです。コントローラー、ミドルウェア、バリデーション、APIエンドポイントなど、アプリケーション層の全12タスクを階層構造チェックボックス形式で管理します。
 
-## Phase 3 進捗: [██░░░░░░░░] 8.3% (1/12タスク完了)
+## Phase 3 進捗: [████░░░░░░] 16.7% (2/12タスク完了)
 
 ---
 
-## 3.1 バリデーション・ユーティリティ [███░░░░░░░] 33.3% (1/3タスク完了)
+## 3.1 バリデーション・ユーティリティ [██████░░░░] 66.7% (2/3タスク完了)
 
 ### 3.1.1 バリデーション基盤
 - [x] **TSK-064-UTL-ZodValidator**: backend/src/utils/zod-validator.ts作成・検証 ✅
@@ -42,13 +42,13 @@ Phase 3「Application Layer」の詳細ToDoリストです。コントローラ�
   - [x] Issueクローズ ✅
 
 ### 3.1.2 レスポンス・リクエスト処理
-- [ ] **TSK-065-UTL-ResponseBuilder**: backend/src/utils/response-builder.ts作成・検証
-  - [ ] 仕様確認・設計理解
-  - [ ] コーディング
-  - [ ] テストコーディング
-  - [ ] 単体テスト実行
-  - [ ] リポジトリコミット
-  - [ ] ToDoチェック
+- [x] **TSK-065-UTL-ResponseBuilder**: backend/src/utils/response-builder.ts作成・検証 ✅
+  - [x] 仕様確認・設計理解 ✅
+  - [x] コーディング ✅
+  - [x] テストコーディング ✅
+  - [x] 単体テスト実行 ✅
+  - [x] リポジトリコミット ✅
+  - [x] ToDoチェック ✅
   - [ ] Issueクローズ
 
 - [ ] **TSK-066-UTL-RequestValidator**: backend/src/utils/request-validator.ts作成・検証
