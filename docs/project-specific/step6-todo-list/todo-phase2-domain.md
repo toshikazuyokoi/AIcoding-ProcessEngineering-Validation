@@ -13,7 +13,7 @@
 
 Phase 2「Domain Layer」の詳細ToDoリストです。エンティティ、ドメインサービス、ビジネスロジックなど、ドメイン層の全15タスクを階層構造チェックボックス形式で管理します。
 
-## Phase 2 進捗: [█████████████] 86.7% (13/15タスク完了)
+## Phase 2 進捗: [██████████████] 93.3% (14/15タスク完了)
 
 ---
 
@@ -267,7 +267,7 @@ Phase 2「Domain Layer」の詳細ToDoリストです。エンティティ、ド
 
 ---
 
-## 2.3 型定義・インターフェース [██████░░░░] 60% (3/5タスク完了)
+## 2.3 型定義・インターフェース [████████░░] 80% (4/5タスク完了)
 
 ### 2.3.1 エンティティ型定義
 - [x] **TSK-059-TYP-UserTypes**: backend/src/domain/types/user.types.ts作成・検証 ✅
@@ -298,13 +298,13 @@ Phase 2「Domain Layer」の詳細ToDoリストです。エンティティ、ド
   - [x] Issueクローズ ✅
 
 ### 2.3.2 共通型・インターフェース
-- [ ] **TSK-062-TYP-CommonTypes**: backend/src/domain/types/common.types.ts作成・検証
-  - [ ] 仕様確認・設計理解
-  - [ ] コーディング
-  - [ ] テストコーディング
-  - [ ] 単体テスト実行
-  - [ ] リポジトリコミット
-  - [ ] ToDoチェック
+- [x] **TSK-062-TYP-CommonTypes**: backend/src/domain/types/common.types.ts作成・検証 ✅
+  - [x] 仕様確認・設計理解 ✅
+  - [x] コーディング ✅
+  - [x] テストコーディング ✅
+  - [x] 単体テスト実行 ✅
+  - [x] リポジトリコミット ✅
+  - [x] ToDoチェック ✅
   - [ ] Issueクローズ
 
 - [ ] **TSK-063-TYP-ServiceInterfaces**: backend/src/domain/interfaces/service.interfaces.ts作成・検証
