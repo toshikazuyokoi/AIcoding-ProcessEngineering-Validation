@@ -13,7 +13,7 @@
 
 Phase 3「Application Layer」の詳細ToDoリストです。コントローラー、ミドルウェア、バリデーション、APIエンドポイントなど、アプリケーション層の全12タスクを階層構造チェックボックス形式で管理します。
 
-## Phase 3 進捗: [████████░░] 41.7% (5/12タスク完了)
+## Phase 3 進捗: [█████████░] 50.0% (6/12タスク完了)
 
 ---
 
@@ -62,7 +62,7 @@ Phase 3「Application Layer」の詳細ToDoリストです。コントローラ�
 
 ---
 
-## 3.2 ミドルウェア [██████░░░░] 66.7% (2/3タスク完了)
+## 3.2 ミドルウェア [██████████] 100% (3/3タスク完了)
 
 ### 3.2.1 認証・セキュリティミドルウェア
 - [x] **TSK-067-MID-AuthMiddleware**: backend/src/middleware/auth-middleware.ts作成・検証 ✅
@@ -124,14 +124,14 @@ Phase 3「Application Layer」の詳細ToDoリストです。コントローラ�
   - [x] ToDoチェック ✅
   - [x] Issueクローズ ✅
 
-- [ ] **TSK-069-MID-LoggingMiddleware**: backend/src/middleware/logging-middleware.ts作成・検証
-  - [ ] 仕様確認・設計理解
-  - [ ] コーディング
-  - [ ] テストコーディング
-  - [ ] 単体テスト実行
-  - [ ] リポジトリコミット
-  - [ ] ToDoチェック
-  - [ ] Issueクローズ
+- [x] **TSK-069-MID-LoggingMiddleware**: backend/src/middleware/logging-middleware.ts作成・検証 ✅
+  - [x] 仕様確認・設計理解 ✅
+  - [x] コーディング ✅
+  - [x] テストコーディング ✅
+  - [x] 単体テスト実行 ✅
+  - [x] リポジトリコミット ✅
+  - [x] ToDoチェック ✅
+  - [x] Issueクローズ ✅
 
 ---
 
