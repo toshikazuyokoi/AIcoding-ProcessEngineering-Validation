@@ -158,6 +158,7 @@ Phase 3「Application Layer」の詳細ToDoリストです。コントローラ�
   - [x] リポジトリコミット ✅
   - [x] ToDoチェック ✅
   - [x] Issueクローズ ✅
+    - [x] Issue #51 クローズ完了 ✅
 
 ### 3.3.2 認証コントローラー
 - [ ] **TSK-070-CTL-AuthController**: backend/src/controllers/auth-controller.ts作成・検証
