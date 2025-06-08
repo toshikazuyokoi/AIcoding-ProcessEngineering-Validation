@@ -135,7 +135,7 @@ Phase 3「Application Layer」の詳細ToDoリストです。コントローラ�
 
 ---
 
-## 3.3 コントローラー [██████░░░░] 50% (3/6タスク完了)
+## 3.3 コントローラー [████████░░] 67% (4/6タスク完了)
 
 ### 3.3.1 基盤コントローラー
 - [x] **TSK-074-CTL-BaseController**: backend/src/controllers/base-controller.ts作成・検証 ✅
@@ -238,14 +238,43 @@ Phase 3「Application Layer」の詳細ToDoリストです。コントローラ�
     - [x] ステークホルダーへの報告 ✅
     - [x] Issue #48 クローズ完了 ✅
 
-- [ ] **TSK-072-CTL-UserController**: backend/src/controllers/user-controller.ts作成・検証
-  - [ ] 仕様確認・設計理解
-  - [ ] コーディング
-  - [ ] テストコーディング
-  - [ ] 単体テスト実行
-  - [ ] リポジトリコミット
-  - [ ] ToDoチェック
-  - [ ] Issueクローズ
+- [x] **TSK-072-CTL-UserController**: backend/src/controllers/user-controller.ts作成・検証 ✅
+  - [x] 仕様確認・設計理解 ✅
+    - [x] ユーザーコントローラーの責任範囲確認 ✅
+    - [x] ユーザーAPIエンドポイントの仕様理解 ✅
+    - [x] プロファイル管理機能の確認 ✅
+    - [x] アカウント管理要件の理解 ✅
+  - [x] コーディング ✅
+    - [x] UserControllerクラスの実装 ✅
+    - [x] プロファイル管理APIの実装 ✅
+    - [x] アカウント削除機能の実装 ✅
+    - [x] BaseController継承による共通処理統合 ✅
+  - [x] テストコーディング ✅
+    - [x] 正常系：プロファイル管理テスト ✅
+    - [x] 異常系：認証エラーテスト ✅
+    - [x] 境界値：バリデーションテスト ✅
+    - [x] セキュリティテスト ✅
+  - [x] 単体テスト実行 ✅
+    - [x] 全テストケースの実行 ✅
+    - [x] カバレッジ90%以上の確認 ✅
+    - [x] パフォーマンス要件の確認 ✅
+    - [x] セキュリティ要件の確認 ✅
+  - [x] リポジトリコミット ✅
+    - [x] feat(#049): UserControllerの実装 ✅
+    - [x] Issue #049の紐付け ✅
+    - [x] 適切な粒度でのコミット ✅
+    - [x] コンフリクトの解決 ✅
+  - [x] ToDoチェック ✅
+    - [x] 全サブタスクの完了確認 ✅
+    - [x] 品質基準の達成確認 ✅
+    - [x] ドキュメントの更新 ✅
+    - [x] 次タスクへの影響確認 ✅
+  - [x] Issueクローズ ✅
+    - [x] 完了条件の全項目達成 ✅
+    - [x] レビュー結果の反映 ✅
+    - [x] 関連ドキュメントの更新 ✅
+    - [x] ステークホルダーへの報告 ✅
+    - [x] Issue #49 クローズ完了 ✅
 
 - [ ] **TSK-073-CTL-CategoryController**: backend/src/controllers/category-controller.ts作成・検証
   - [ ] 仕様確認・設計理解
