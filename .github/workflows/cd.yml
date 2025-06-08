@@ -56,6 +56,29 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 追加: Node.jsのセットアップ - 依存関係の検証用
+      - name: Setup Node.js for validation
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          # フロントエンドディレクトリのpackage-lock.jsonを明示的に指定
+          cache-dependency-path: "frontend/package-lock.json"
+
+      # 追加: フロントエンド依存関係の検証
+      - name: Validate frontend dependencies
+        run: |
+          if [ -d "frontend" ] && [ -f "frontend/package.json" ]; then
+            cd frontend
+            echo "Validating frontend dependencies..."
+            npm ci --dry-run
+            echo "✅ Frontend dependencies validation completed"
+          else
+            echo "⚠️ Frontend directory or package.json not found, skipping validation"
+          fi
+        # 検証だけなのでエラーでも続行
+        continue-on-error: true
+
       - name: Determine deployment environment
         id: determine-environment
         run: |
@@ -112,6 +135,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 修正: フロントエンドビルド用のNode.js設定を追加
+      - name: Setup Node.js for frontend
+        if: matrix.service == 'frontend'
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: "./frontend/package-lock.json"
+
+      # 修正: フロントエンド依存関係のインストールを追加
+      - name: Install frontend dependencies
+        if: matrix.service == 'frontend'
+        run: |
+          cd frontend
+          echo "Installing frontend dependencies..."
+          npm ci
+          echo "✅ Frontend dependencies installation completed"
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -145,6 +186,9 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64,linux/arm64
+          # 修正: フロントエンド用のビルド引数を追加
+          build-args: |
+            ${{ matrix.service == 'frontend' && format('NODE_VERSION={0}', env.NODE_VERSION) || '' }}
 
       - name: Generate SBOM
         uses: anchore/sbom-action@v0
