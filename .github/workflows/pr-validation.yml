@@ -1,0 +1,117 @@
+# ===================================
+# Task Management System - PR Validation Workflow
+# ===================================
+# Project: Task Management System
+# Component: Pull Request Validation
+# Purpose: Automated validation of pull requests
+
+name: PR Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main, develop]
+
+env:
+  NODE_VERSION: "20.11.0"
+  DOCKER_BUILDKIT: 1
+  COMPOSE_DOCKER_CLI_BUILD: 1
+
+jobs:
+  validate-pr:
+    name: Validate Pull Request
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      # Node.js設定を修正
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          # キャッシュパスの修正
+          cache-dependency-path: |
+            **/package-lock.json
+            frontend/package-lock.json
+      
+      # 依存関係インストールステップを追加
+      - name: Install Dependencies
+        run: |
+          if [ -d "frontend" ] && [ -f "frontend/package.json" ]; then
+            echo "Installing frontend dependencies..."
+            cd frontend
+            npm ci
+            cd ..
+          fi
+          
+          if [ -d "backend" ] && [ -f "backend/package.json" ]; then
+            echo "Installing backend dependencies..."
+            cd backend
+            npm ci
+            cd ..
+          fi
+          
+          echo "✅ Dependencies installation completed"
+      
+      - name: Validate PR title
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          echo "Validating PR title: $PR_TITLE"
+          
+          # PR title pattern validation
+          if [[ ! "$PR_TITLE" =~ ^(feat|fix|docs|style|refactor|perf|test|chore|ci|build)(\(.+\))?:\ .+ ]]; then
+            echo "❌ Invalid PR title format. Please follow the conventional commits format:"
+            echo "type(scope): description"
+            echo "Examples: feat(auth): add login functionality, fix: correct API response format"
+            exit 1
+          fi
+          
+          echo "✅ PR title format is valid"
+      
+      - name: Check for merge conflicts
+        run: |
+          if git merge-base --is-ancestor origin/main HEAD; then
+            MERGE_BASE=$(git merge-base origin/main HEAD)
+          else
+            MERGE_BASE=$(git merge-base origin/develop HEAD)
+          fi
+          
+          CONFLICTS=$(git diff --name-only --diff-filter=U $MERGE_BASE...HEAD)
+          
+          if [ -n "$CONFLICTS" ]; then
+            echo "❌ Merge conflicts detected in the following files:"
+            echo "$CONFLICTS"
+            exit 1
+          fi
+          
+          echo "✅ No merge conflicts detected"
+      
+      - name: Run quick tests
+        run: |
+          echo "🧪 Running quick validation tests..."
+          
+          if [ -d "frontend" ] && [ -f "frontend/package.json" ]; then
+            cd frontend
+            if grep -q "\"test\":" package.json; then
+              echo "Running frontend quick tests..."
+              npm test -- --watchAll=false --findRelatedTests $(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep -E '\.js$|\.ts$|\.jsx$|\.tsx$' | tr '\n' ' ')
+            fi
+            cd ..
+          fi
+          
+          if [ -d "backend" ] && [ -f "backend/package.json" ]; then
+            cd backend
+            if grep -q "\"test\":" package.json; then
+              echo "Running backend quick tests..."
+              npm test -- --watchAll=false --findRelatedTests $(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep -E '\.js$|\.ts$' | tr '\n' ' ')
+            fi
+            cd ..
+          fi
+          
+          echo "✅ Quick validation tests completed"
