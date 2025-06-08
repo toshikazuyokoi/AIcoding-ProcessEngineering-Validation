@@ -63,7 +63,9 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: "npm"
           # フロントエンドディレクトリのpackage-lock.jsonを明示的に指定
-          cache-dependency-path: "frontend/package-lock.json"
+          cache-dependency-path: |
+            **/package-lock.json
+            frontend/package-lock.json
 
       # 追加: フロントエンド依存関係の検証
       - name: Validate frontend dependencies
@@ -142,7 +144,9 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "npm"
-          cache-dependency-path: "./frontend/package-lock.json"
+          cache-dependency-path: |
+            **/package-lock.json
+            frontend/package-lock.json
 
       # 修正: フロントエンド依存関係のインストールを追加
       - name: Install frontend dependencies
