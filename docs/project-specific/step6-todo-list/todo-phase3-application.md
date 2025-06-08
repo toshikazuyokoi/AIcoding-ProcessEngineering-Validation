@@ -135,7 +135,7 @@ Phase 3「Application Layer」の詳細ToDoリストです。コントローラ�
 
 ---
 
-## 3.3 コントローラー [████████░░] 67% (4/6タスク完了)
+## 3.3 コントローラー [██████████] 83% (5/6タスク完了)
 
 ### 3.3.1 基盤コントローラー
 - [x] **TSK-074-CTL-BaseController**: backend/src/controllers/base-controller.ts作成・検証 ✅
@@ -276,14 +276,43 @@ Phase 3「Application Layer」の詳細ToDoリストです。コントローラ�
     - [x] ステークホルダーへの報告 ✅
     - [x] Issue #49 クローズ完了 ✅
 
-- [ ] **TSK-073-CTL-CategoryController**: backend/src/controllers/category-controller.ts作成・検証
-  - [ ] 仕様確認・設計理解
-  - [ ] コーディング
-  - [ ] テストコーディング
-  - [ ] 単体テスト実行
-  - [ ] リポジトリコミット
-  - [ ] ToDoチェック
-  - [ ] Issueクローズ
+- [x] **TSK-073-CTL-CategoryController**: backend/src/controllers/category-controller.ts作成・検証 ✅
+  - [x] 仕様確認・設計理解 ✅
+    - [x] カテゴリコントローラーの責任範囲確認 ✅
+    - [x] カテゴリAPIエンドポイントの仕様理解 ✅
+    - [x] CRUD機能の確認 ✅
+    - [x] 権限管理要件の理解 ✅
+  - [x] コーディング ✅
+    - [x] CategoryControllerクラスの実装 ✅
+    - [x] カテゴリCRUD APIの実装 ✅
+    - [x] 色・名前バリデーション機能の実装 ✅
+    - [x] BaseController継承による共通処理統合 ✅
+  - [x] テストコーディング ✅
+    - [x] 正常系：カテゴリCRUDテスト ✅
+    - [x] 異常系：認証エラーテスト ✅
+    - [x] 境界値：バリデーションテスト ✅
+    - [x] セキュリティテスト ✅
+  - [x] 単体テスト実行 ✅
+    - [x] 全テストケースの実行 ✅
+    - [x] カバレッジ90%以上の確認 ✅
+    - [x] パフォーマンス要件の確認 ✅
+    - [x] セキュリティ要件の確認 ✅
+  - [x] リポジトリコミット ✅
+    - [x] feat(#050): CategoryControllerの実装 ✅
+    - [x] Issue #050の紐付け ✅
+    - [x] 適切な粒度でのコミット ✅
+    - [x] コンフリクトの解決 ✅
+  - [x] ToDoチェック ✅
+    - [x] 全サブタスクの完了確認 ✅
+    - [x] 品質基準の達成確認 ✅
+    - [x] ドキュメントの更新 ✅
+    - [x] 次タスクへの影響確認 ✅
+  - [x] Issueクローズ ✅
+    - [x] 完了条件の全項目達成 ✅
+    - [x] レビュー結果の反映 ✅
+    - [x] 関連ドキュメントの更新 ✅
+    - [x] ステークホルダーへの報告 ✅
+    - [x] Issue #50 クローズ完了 ✅
 
 ### 3.3.4 アプリケーション統合
 - [ ] **TSK-075-APP-ExpressApp**: backend/src/app.ts作成・検証
