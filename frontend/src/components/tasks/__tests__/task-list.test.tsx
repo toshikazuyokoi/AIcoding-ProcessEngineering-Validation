@@ -127,6 +127,12 @@ describe('TaskList Component', () => {
   beforeEach(() => {
     // Reset all mocks
     jest.clearAllMocks();
+
+    // Mock window.confirm
+    Object.defineProperty(window, 'confirm', {
+      writable: true,
+      value: jest.fn().mockReturnValue(true)
+    });
     
     // Reset mock useAuth to default state
     Object.assign(mockUseAuth, {

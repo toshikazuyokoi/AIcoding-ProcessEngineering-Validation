@@ -13,51 +13,16 @@
  */
 
 import React, { useCallback, useMemo } from 'react';
+import { Task, TaskPriority, TaskStatus, TaskCategory } from '../../hooks/use-tasks';
 
 // ===================================
 // Task Item Types and Interfaces
 // ===================================
 
 /**
- * Task priority enum
- */
-export type TaskPriority = 'URGENT' | 'HIGH' | 'MEDIUM' | 'LOW';
-
-/**
- * Task status enum
- */
-export type TaskStatus = 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
-
-/**
  * Task list view mode enum
  */
 export type TaskListViewMode = 'list' | 'grid' | 'compact';
-
-/**
- * Category interface
- */
-export interface Category {
-  id: string;
-  name: string;
-  color: string;
-  description?: string;
-}
-
-/**
- * Task interface
- */
-export interface Task {
-  id: string;
-  title: string;
-  description?: string;
-  priority: TaskPriority;
-  status: TaskStatus;
-  dueDate?: string;
-  createdAt: string;
-  updatedAt: string;
-  userId: string;
-  categories: Category[];
-}
 
 /**
  * Task item props interface
@@ -306,8 +271,8 @@ export const TaskItem: React.FC<TaskItemProps> = React.memo(({
           <span
             key={category.id}
             className="task-item__category"
-            style={{ backgroundColor: category.color }}
-            title={category.description || category.name}
+            style={{ backgroundColor: category.color || '#3B82F6' }}
+            title={category.name}
           >
             {category.name}
           </span>
