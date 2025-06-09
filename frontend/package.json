@@ -8,8 +8,11 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
     "react": "^18.2.0",
-    "@types/react": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.20.1"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.1.0",
@@ -25,9 +28,15 @@
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "jsdom",
-    "roots": ["<rootDir>/src"],
-    "testMatch": ["**/__tests__/**/*.test.{ts,tsx}"],
-    "setupFilesAfterEnv": ["<rootDir>/src/setupTests.ts"],
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "testMatch": [
+      "**/__tests__/**/*.test.{ts,tsx}"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/setupTests.ts"
+    ],
     "collectCoverageFrom": [
       "src/**/*.{ts,tsx}",
       "!src/**/*.d.ts"
