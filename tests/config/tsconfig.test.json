@@ -1,0 +1,146 @@
+{
+  "//": "===================================",
+  "//": "Integration Test TypeScript Configuration",
+  "//": "===================================",
+  "//": "Generated for TSK-IT-000-003-ConfigFiles",
+  "//": "Project: Task Management System - Integration Test",
+  "//": "Purpose: TypeScript configuration for integration and E2E testing",
+
+  "compilerOptions": {
+    // ===================================
+    // Basic Options
+    // ===================================
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    
+    // ===================================
+    // Module Resolution
+    // ===================================
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    
+    // ===================================
+    // Path Mapping
+    // ===================================
+    "baseUrl": "..",
+    "paths": {
+      "@/*": ["*"],
+      "@support/*": ["support/*"],
+      "@integration/*": ["integration/*"],
+      "@e2e/*": ["e2e/*"],
+      "@backend/*": ["../backend/src/*"],
+      "@frontend/*": ["../frontend/src/*"],
+      "@config/*": ["config/*"],
+      "@utils/*": ["support/utils/*"],
+      "@fixtures/*": ["support/fixtures/*"],
+      "@factories/*": ["support/factories/*"],
+      "@helpers/*": ["support/helpers/*"]
+    },
+    
+    // ===================================
+    // Type Checking
+    // ===================================
+    "exactOptionalPropertyTypes": false,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": false,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": false,
+    "noUncheckedIndexedAccess": false,
+    
+    // ===================================
+    // Emit Options
+    // ===================================
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": true,
+    "outDir": "../dist/tests",
+    "removeComments": false,
+    "importHelpers": true,
+    "downlevelIteration": true,
+    
+    // ===================================
+    // Experimental Options
+    // ===================================
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    
+    // ===================================
+    // Advanced Options
+    // ===================================
+    "incremental": true,
+    "tsBuildInfoFile": "../dist/tests/.tsbuildinfo"
+  },
+  
+  // ===================================
+  // Include/Exclude Patterns
+  // ===================================
+  "include": [
+    "../integration/**/*",
+    "../support/**/*",
+    "../e2e/**/*",
+    "../config/**/*",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx"
+  ],
+  
+  "exclude": [
+    "../node_modules",
+    "../dist",
+    "../coverage",
+    "../test-results",
+    "../playwright-report",
+    "../backend/node_modules",
+    "../frontend/node_modules",
+    "**/*.d.ts"
+  ],
+  
+  // ===================================
+  // Type Roots
+  // ===================================
+  "typeRoots": [
+    "../node_modules/@types",
+    "../backend/node_modules/@types",
+    "../frontend/node_modules/@types",
+    "./types"
+  ],
+  
+  // ===================================
+  // References
+  // ===================================
+  "references": [
+    {
+      "path": "../backend/tsconfig.json"
+    }
+  ],
+  
+  // ===================================
+  // Jest Configuration
+  // ===================================
+  "ts-node": {
+    "esm": false,
+    "experimentalSpecifierResolution": "node",
+    "compilerOptions": {
+      "module": "CommonJS",
+      "target": "ES2022"
+    }
+  }
+}
