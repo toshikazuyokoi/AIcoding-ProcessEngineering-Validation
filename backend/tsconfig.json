@@ -41,7 +41,8 @@
   "include": [
     "src/**/*",
     "config/**/*",
-    "__tests__/**/*"
+    "__tests__/**/*",
+    "tests/**/*"
   ],
   "exclude": [
     "node_modules",
