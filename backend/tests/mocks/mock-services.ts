@@ -149,15 +149,32 @@ export interface FindManyOptions {
 // ===================================
 
 /**
- * Test data factory class
+ * Test data factory class with integration test support
  */
 export class TestDataFactory {
+  private static sequenceCounters = {
+    user: 1,
+    task: 1,
+    category: 1
+  };
+
+  private static generatedData = {
+    users: new Map<string, User>(),
+    tasks: new Map<string, Task>(),
+    categories: new Map<string, Category>()
+  };
+
+  // ===================================
+  // Basic Data Creation Methods
+  // ===================================
+
   /**
    * Create mock user
    */
   static createUser(overrides: Partial<User> = {}): User {
-    return {
-      id: overrides.id || 'user-1',
+    const id = overrides.id || this.generateId('user');
+    const user = {
+      id,
       username: overrides.username || 'testuser',
       email: overrides.email || 'test@example.com',
       passwordHash: overrides.passwordHash || '$2b$10$hashedpassword',
@@ -167,14 +184,18 @@ export class TestDataFactory {
       updatedAt: overrides.updatedAt || new Date(),
       ...overrides
     };
+
+    this.generatedData.users.set(id, user);
+    return user;
   }
 
   /**
    * Create mock task
    */
   static createTask(overrides: Partial<Task> = {}): Task {
-    return {
-      id: overrides.id || 'task-1',
+    const id = overrides.id || this.generateId('task');
+    const task = {
+      id,
       userId: overrides.userId || 'user-1',
       title: overrides.title || 'Test Task',
       description: overrides.description || 'Test task description',
@@ -186,20 +207,27 @@ export class TestDataFactory {
       updatedAt: overrides.updatedAt || new Date(),
       ...overrides
     };
+
+    this.generatedData.tasks.set(id, task);
+    return task;
   }
 
   /**
    * Create mock category
    */
   static createCategory(overrides: Partial<Category> = {}): Category {
-    return {
-      id: overrides.id || 'category-1',
+    const id = overrides.id || this.generateId('category');
+    const category = {
+      id,
       name: overrides.name || 'Test Category',
       color: overrides.color || '#FF5722',
       description: overrides.description || 'Test category description',
       createdAt: overrides.createdAt || new Date(),
       ...overrides
     };
+
+    this.generatedData.categories.set(id, category);
+    return category;
   }
 
   /**
@@ -213,6 +241,418 @@ export class TestDataFactory {
         refreshToken: 'mock-refresh-token',
         expiresIn: 3600
       }
+    };
+  }
+
+  // ===================================
+  // Integration Test Specialized Methods
+  // ===================================
+
+  /**
+   * Create admin user
+   */
+  static createAdminUser(overrides: Partial<User> = {}): User {
+    return this.createUser({
+      username: 'admin',
+      email: 'admin@integration-test.com',
+      role: UserRole.admin,
+      ...overrides
+    });
+  }
+
+  /**
+   * Create regular user
+   */
+  static createRegularUser(overrides: Partial<User> = {}): User {
+    return this.createUser({
+      username: 'user',
+      email: 'user@integration-test.com',
+      role: UserRole.user,
+      ...overrides
+    });
+  }
+
+  /**
+   * Create inactive user
+   */
+  static createInactiveUser(overrides: Partial<User> = {}): User {
+    return this.createUser({
+      username: 'inactive',
+      email: 'inactive@integration-test.com',
+      isActive: false,
+      ...overrides
+    });
+  }
+
+  /**
+   * Create completed task
+   */
+  static createCompletedTask(userId: string, overrides: Partial<Task> = {}): Task {
+    return this.createTask({
+      userId,
+      title: 'Completed Task',
+      status: TaskStatus.completed,
+      completedAt: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
+      ...overrides
+    });
+  }
+
+  /**
+   * Create overdue task
+   */
+  static createOverdueTask(userId: string, overrides: Partial<Task> = {}): Task {
+    return this.createTask({
+      userId,
+      title: 'Overdue Task',
+      status: TaskStatus.pending,
+      priority: TaskPriority.high,
+      dueDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+      ...overrides
+    });
+  }
+
+  /**
+   * Create work category
+   */
+  static createWorkCategory(overrides: Partial<Category> = {}): Category {
+    return this.createCategory({
+      name: 'Work',
+      color: '#2196F3',
+      description: 'Work-related tasks',
+      ...overrides
+    });
+  }
+
+  /**
+   * Create personal category
+   */
+  static createPersonalCategory(overrides: Partial<Category> = {}): Category {
+    return this.createCategory({
+      name: 'Personal',
+      color: '#4CAF50',
+      description: 'Personal tasks',
+      ...overrides
+    });
+  }
+
+  // ===================================
+  // Batch Creation Methods
+  // ===================================
+
+  /**
+   * Create multiple users
+   */
+  static createUsers(count: number, type: 'admin' | 'user' | 'inactive' = 'user'): User[] {
+    const users: User[] = [];
+    for (let i = 0; i < count; i++) {
+      let user: User;
+      switch (type) {
+        case 'admin':
+          user = this.createAdminUser({
+            username: `admin${i + 1}`,
+            email: `admin${i + 1}@integration-test.com`
+          });
+          break;
+        case 'inactive':
+          user = this.createInactiveUser({
+            username: `inactive${i + 1}`,
+            email: `inactive${i + 1}@integration-test.com`
+          });
+          break;
+        default:
+          user = this.createRegularUser({
+            username: `user${i + 1}`,
+            email: `user${i + 1}@integration-test.com`
+          });
+      }
+      users.push(user);
+    }
+    return users;
+  }
+
+  /**
+   * Create task list for user
+   */
+  static createTaskList(userId: string, count: number, options: {
+    statuses?: TaskStatus[];
+    priorities?: TaskPriority[];
+  } = {}): Task[] {
+    const {
+      statuses = [TaskStatus.pending, TaskStatus.completed],
+      priorities = [TaskPriority.low, TaskPriority.medium, TaskPriority.high]
+    } = options;
+
+    const tasks: Task[] = [];
+    for (let i = 0; i < count; i++) {
+      const status = statuses[i % statuses.length];
+      const priority = priorities[i % priorities.length];
+
+      const task = this.createTask({
+        userId,
+        title: `Task ${i + 1}`,
+        status,
+        priority,
+        ...(status === TaskStatus.completed && {
+          completedAt: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000)
+        })
+      });
+      tasks.push(task);
+    }
+    return tasks;
+  }
+
+  /**
+   * Create multiple categories
+   */
+  static createCategories(count: number, types: ('work' | 'personal')[] = ['work', 'personal']): Category[] {
+    const categories: Category[] = [];
+    for (let i = 0; i < count; i++) {
+      const type = types[i % types.length];
+      let category: Category;
+
+      switch (type) {
+        case 'personal':
+          category = this.createPersonalCategory({
+            name: `Personal ${i + 1}`
+          });
+          break;
+        default:
+          category = this.createWorkCategory({
+            name: `Work ${i + 1}`
+          });
+      }
+      categories.push(category);
+    }
+    return categories;
+  }
+
+  // ===================================
+  // Scenario Generation Methods
+  // ===================================
+
+  /**
+   * Create complete user scenario
+   */
+  static createUserScenario(options: {
+    userType?: 'admin' | 'user';
+    taskCount?: number;
+    categoryCount?: number;
+    includeOverdue?: boolean;
+  } = {}): {
+    user: User;
+    categories: Category[];
+    tasks: Task[];
+    scenario: {
+      userType: string;
+      taskCount: number;
+      categoryCount: number;
+      completedTasks: number;
+      activeTasks: number;
+    };
+  } {
+    const {
+      userType = 'user',
+      taskCount = 5,
+      categoryCount = 3,
+      includeOverdue = true
+    } = options;
+
+    // Create user
+    const user = userType === 'admin' ? this.createAdminUser() : this.createRegularUser();
+
+    // Create categories
+    const categories = this.createCategories(categoryCount);
+
+    // Create tasks with different statuses
+    const statuses = [TaskStatus.pending, TaskStatus.completed];
+    if (includeOverdue) {
+      statuses.push(TaskStatus.pending); // Will be made overdue
+    }
+
+    const tasks = this.createTaskList(user.id, taskCount, { statuses });
+
+    // Make some tasks overdue if requested
+    if (includeOverdue && tasks.length > 2) {
+      tasks[tasks.length - 1] = this.createOverdueTask(user.id, {
+        title: tasks[tasks.length - 1].title
+      });
+    }
+
+    // Assign categories to tasks
+    tasks.forEach((task, index) => {
+      if (categories[index % categories.length]) {
+        // Note: Task interface might not have categoryId, this is for demonstration
+        (task as any).categoryId = categories[index % categories.length].id;
+      }
+    });
+
+    return {
+      user,
+      categories,
+      tasks,
+      scenario: {
+        userType,
+        taskCount: tasks.length,
+        categoryCount: categories.length,
+        completedTasks: tasks.filter(t => t.status === TaskStatus.completed).length,
+        activeTasks: tasks.filter(t => t.status === TaskStatus.pending).length
+      }
+    };
+  }
+
+  /**
+   * Create team scenario
+   */
+  static createTeamScenario(options: {
+    userCount?: number;
+    adminCount?: number;
+    sharedCategoryCount?: number;
+    tasksPerUser?: number;
+  } = {}): {
+    admins: User[];
+    users: User[];
+    allUsers: User[];
+    sharedCategories: Category[];
+    allTasks: Task[];
+    scenario: {
+      totalUsers: number;
+      adminCount: number;
+      regularUserCount: number;
+      totalTasks: number;
+      sharedCategoryCount: number;
+    };
+  } {
+    const {
+      userCount = 3,
+      adminCount = 1,
+      sharedCategoryCount = 2,
+      tasksPerUser = 3
+    } = options;
+
+    // Create admin users
+    const admins = this.createUsers(adminCount, 'admin');
+
+    // Create regular users
+    const users = this.createUsers(userCount, 'user');
+
+    // Create shared categories
+    const sharedCategories = this.createCategories(sharedCategoryCount);
+
+    // Create tasks for each user
+    const allTasks: Task[] = [];
+    [...admins, ...users].forEach(user => {
+      const userTasks = this.createTaskList(user.id, tasksPerUser);
+      // Assign shared categories
+      userTasks.forEach((task, index) => {
+        if (sharedCategories[index % sharedCategories.length]) {
+          (task as any).categoryId = sharedCategories[index % sharedCategories.length].id;
+        }
+      });
+      allTasks.push(...userTasks);
+    });
+
+    return {
+      admins,
+      users,
+      allUsers: [...admins, ...users],
+      sharedCategories,
+      allTasks,
+      scenario: {
+        totalUsers: admins.length + users.length,
+        adminCount: admins.length,
+        regularUserCount: users.length,
+        totalTasks: allTasks.length,
+        sharedCategoryCount: sharedCategories.length
+      }
+    };
+  }
+
+  // ===================================
+  // Utility Methods
+  // ===================================
+
+  /**
+   * Generate unique ID
+   */
+  private static generateId(type: 'user' | 'task' | 'category'): string {
+    const sequence = this.sequenceCounters[type]++;
+    const timestamp = Date.now();
+    return `${type}-${timestamp}-${sequence}`;
+  }
+
+  /**
+   * Get generated data
+   */
+  static getGeneratedData(): {
+    users: User[];
+    tasks: Task[];
+    categories: Category[];
+    counts: {
+      users: number;
+      tasks: number;
+      categories: number;
+    };
+  } {
+    return {
+      users: Array.from(this.generatedData.users.values()),
+      tasks: Array.from(this.generatedData.tasks.values()),
+      categories: Array.from(this.generatedData.categories.values()),
+      counts: {
+        users: this.generatedData.users.size,
+        tasks: this.generatedData.tasks.size,
+        categories: this.generatedData.categories.size
+      }
+    };
+  }
+
+  /**
+   * Clear generated data
+   */
+  static clearGeneratedData(): void {
+    this.generatedData.users.clear();
+    this.generatedData.tasks.clear();
+    this.generatedData.categories.clear();
+    this.sequenceCounters = {
+      user: 1,
+      task: 1,
+      category: 1
+    };
+  }
+
+  /**
+   * Get data by ID
+   */
+  static getUserById(id: string): User | undefined {
+    return this.generatedData.users.get(id);
+  }
+
+  static getTaskById(id: string): Task | undefined {
+    return this.generatedData.tasks.get(id);
+  }
+
+  static getCategoryById(id: string): Category | undefined {
+    return this.generatedData.categories.get(id);
+  }
+
+  /**
+   * Validate data integrity
+   */
+  static validateDataIntegrity(): {
+    isValid: boolean;
+    issues: string[];
+  } {
+    const issues: string[] = [];
+
+    // Check task-user relationships
+    for (const task of this.generatedData.tasks.values()) {
+      if (!this.generatedData.users.has(task.userId)) {
+        issues.push(`Task ${task.id} references non-existent user ${task.userId}`);
+      }
+    }
+
+    return {
+      isValid: issues.length === 0,
+      issues
     };
   }
 }
