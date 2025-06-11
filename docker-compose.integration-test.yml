@@ -1,0 +1,294 @@
+# ===================================
+# Task Management System - Integration Test Environment
+# ===================================
+# Generated for TSK-IT-000-001-TestEnvironment
+# Project: Task Management System - Integration Test
+# Environment: Integration Test
+# Purpose: Integration & E2E testing, isolated test execution
+
+version: "3.8"
+
+# ===================================
+# Networks
+# ===================================
+networks:
+  integration-test-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.22.0.0/16
+
+# ===================================
+# Volumes
+# ===================================
+volumes:
+  postgres_integration_data:
+    driver: local
+  redis_integration_data:
+    driver: local
+  integration_test_reports:
+    driver: local
+  integration_test_artifacts:
+    driver: local
+  e2e_test_reports:
+    driver: local
+  playwright_cache:
+    driver: local
+
+# ===================================
+# Services
+# ===================================
+services:
+  # ===================================
+  # Integration Test Database Services
+  # ===================================
+  postgres-integration:
+    image: postgres:16.1-alpine
+    container_name: integration-postgres
+    restart: "no"
+    environment:
+      POSTGRES_DB: taskdb_integration
+      POSTGRES_USER: integration_user
+      POSTGRES_PASSWORD: integration_password_123
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --locale=C"
+      TZ: UTC
+    ports:
+      - "5434:5432" # Dedicated port for integration tests
+    volumes:
+      - postgres_integration_data:/var/lib/postgresql/data
+      - ./tests/support/database/init-integration.sql:/docker-entrypoint-initdb.d/init-integration.sql:ro
+    networks:
+      integration-test-network:
+        ipv4_address: 172.22.0.10
+    healthcheck:
+      test:
+        ["CMD-SHELL", "pg_isready -U integration_user -d taskdb_integration"]
+      interval: 3s
+      timeout: 2s
+      retries: 15
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  redis-integration:
+    image: redis:7.2.4-alpine
+    container_name: integration-redis
+    restart: "no"
+    environment:
+      TZ: UTC
+    ports:
+      - "6381:6379" # Dedicated port for integration tests
+    volumes:
+      - redis_integration_data:/data
+    command: redis-server --save "" --appendonly no --maxmemory 512mb --maxmemory-policy allkeys-lru
+    networks:
+      integration-test-network:
+        ipv4_address: 172.22.0.11
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 2s
+      retries: 10
+      start_period: 5s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ===================================
+  # Backend Integration Test Service
+  # ===================================
+  backend-integration:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.test
+      target: test
+    container_name: integration-backend
+    restart: "no"
+    environment:
+      NODE_ENV: integration
+      DATABASE_URL: postgresql://integration_user:integration_password_123@postgres-integration:5432/taskdb_integration
+      REDIS_URL: redis://redis-integration:6379
+      JWT_SECRET: integration_jwt_secret_key_for_testing_only
+      JWT_EXPIRES_IN: 2h
+      PORT: 8002
+      LOG_LEVEL: warn
+      TZ: UTC
+      # Integration test specific environment variables
+      TEST_TIMEOUT: 60000
+      JEST_WORKERS: 4
+      COVERAGE_THRESHOLD: 85
+      TEST_TYPE: integration
+    volumes:
+      - ./backend:/app
+      - ./tests:/app/tests
+      - integration_test_reports:/app/coverage
+      - integration_test_artifacts:/app/test-results
+      - /app/node_modules
+    working_dir: /app
+    command: npm run test:integration
+    depends_on:
+      postgres-integration:
+        condition: service_healthy
+      redis-integration:
+        condition: service_healthy
+    networks:
+      integration-test-network:
+        ipv4_address: 172.22.0.20
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ===================================
+  # Frontend Integration Test Service
+  # ===================================
+  frontend-integration:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.test
+      target: test
+    container_name: integration-frontend
+    restart: "no"
+    environment:
+      NODE_ENV: integration
+      REACT_APP_API_URL: http://backend-integration:8002
+      CI: true
+      TZ: UTC
+      # Integration test specific environment variables
+      JEST_WORKERS: 4
+      COVERAGE_THRESHOLD: 85
+      GENERATE_SOURCEMAP: false
+      TEST_TYPE: integration
+    volumes:
+      - ./frontend:/app
+      - ./tests:/app/tests
+      - integration_test_reports:/app/coverage
+      - integration_test_artifacts:/app/test-results
+      - /app/node_modules
+    working_dir: /app
+    command: npm run test:integration
+    depends_on:
+      - backend-integration
+    networks:
+      integration-test-network:
+        ipv4_address: 172.22.0.30
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ===================================
+  # E2E Test Service with Playwright
+  # ===================================
+  e2e-integration:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.e2e
+      target: e2e
+    container_name: integration-e2e
+    restart: "no"
+    environment:
+      NODE_ENV: integration
+      BASE_URL: http://frontend-integration:3000
+      API_URL: http://backend-integration:8002
+      TZ: UTC
+      # E2E test configuration
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      HEADLESS: true
+      TIMEOUT: 120000
+      RETRIES: 2
+      WORKERS: 2
+    volumes:
+      - ./tests:/app/tests
+      - e2e_test_reports:/app/test-results
+      - e2e_test_reports:/app/playwright-report
+      - playwright_cache:/ms-playwright
+      - /app/node_modules
+    working_dir: /app
+    command: npm run test:e2e:integration
+    depends_on:
+      - frontend-integration
+      - backend-integration
+    networks:
+      integration-test-network:
+        ipv4_address: 172.22.0.40
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ===================================
+  # Integration Test Data Seeder
+  # ===================================
+  integration-seeder:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.test
+      target: test
+    container_name: integration-seeder
+    restart: "no"
+    environment:
+      NODE_ENV: integration
+      DATABASE_URL: postgresql://integration_user:integration_password_123@postgres-integration:5432/taskdb_integration
+      TZ: UTC
+    volumes:
+      - ./backend:/app
+      - ./tests:/app/tests
+      - /app/node_modules
+    working_dir: /app
+    command: npm run db:seed:integration
+    depends_on:
+      postgres-integration:
+        condition: service_healthy
+    networks:
+      integration-test-network:
+        ipv4_address: 172.22.0.50
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ===================================
+  # Integration Test Reporter
+  # ===================================
+  integration-reporter:
+    image: node:20.11.0-alpine
+    container_name: integration-reporter
+    restart: "no"
+    environment:
+      NODE_ENV: integration
+      TZ: UTC
+    volumes:
+      - integration_test_reports:/reports/coverage
+      - integration_test_artifacts:/reports/artifacts
+      - e2e_test_reports:/reports/e2e
+      - ./tests/support/reporting:/scripts:ro
+    working_dir: /scripts
+    command: node generate-integration-report.js
+    depends_on:
+      - backend-integration
+      - frontend-integration
+      - e2e-integration
+    networks:
+      integration-test-network:
+        ipv4_address: 172.22.0.60
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
