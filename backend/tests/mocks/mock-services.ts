@@ -1447,5 +1447,776 @@ export class MockFactory {
   }
 }
 
+// ===================================
+// Integration Test Mock Services
+// ===================================
+
+/**
+ * Mock Services for Integration Tests
+ */
+export class MockServices {
+  private static instance: MockServices;
+  private mockFactory: MockFactory;
+  private apiMocks: Map<string, any> = new Map();
+  private browserMocks: Map<string, any> = new Map();
+  private externalMocks: Map<string, any> = new Map();
+
+  private constructor() {
+    this.mockFactory = MockFactory;
+  }
+
+  /**
+   * Get singleton instance
+   */
+  static getInstance(): MockServices {
+    if (!MockServices.instance) {
+      MockServices.instance = new MockServices();
+    }
+    return MockServices.instance;
+  }
+
+  // ===================================
+  // API Mock Setup
+  // ===================================
+
+  /**
+   * Setup Auth API Mock
+   */
+  setupAuthAPIMock(config?: MockConfig): MockAuthAPI {
+    const authAPI = new MockAuthAPI(config);
+    this.apiMocks.set('auth', authAPI);
+    return authAPI;
+  }
+
+  /**
+   * Setup Task API Mock
+   */
+  setupTaskAPIMock(config?: MockConfig): MockTaskAPI {
+    const taskAPI = new MockTaskAPI(config);
+    this.apiMocks.set('task', taskAPI);
+    return taskAPI;
+  }
+
+  /**
+   * Setup Category API Mock
+   */
+  setupCategoryAPIMock(config?: MockConfig): MockCategoryAPI {
+    const categoryAPI = new MockCategoryAPI(config);
+    this.apiMocks.set('category', categoryAPI);
+    return categoryAPI;
+  }
+
+  // ===================================
+  // External Service Mock Setup
+  // ===================================
+
+  /**
+   * Setup Email Service Mock
+   */
+  setupEmailServiceMock(config?: MockConfig): MockEmailService {
+    const emailService = new MockEmailService(config);
+    this.externalMocks.set('email', emailService);
+    return emailService;
+  }
+
+  /**
+   * Setup Notification Service Mock
+   */
+  setupNotificationServiceMock(config?: MockConfig): MockNotificationService {
+    const notificationService = new MockNotificationService(config);
+    this.externalMocks.set('notification', notificationService);
+    return notificationService;
+  }
+
+  // ===================================
+  // Browser API Mock Setup
+  // ===================================
+
+  /**
+   * Setup Browser API Mock
+   */
+  setupBrowserAPIMock(config?: MockConfig): MockBrowserAPI {
+    const browserAPI = new MockBrowserAPI(config);
+    this.browserMocks.set('browser', browserAPI);
+    return browserAPI;
+  }
+
+  /**
+   * Setup LocalStorage Mock
+   */
+  setupLocalStorageMock(config?: MockConfig): MockLocalStorage {
+    const localStorage = new MockLocalStorage(config);
+    this.browserMocks.set('localStorage', localStorage);
+    return localStorage;
+  }
+
+  // ===================================
+  // Complete Mock Setup
+  // ===================================
+
+  /**
+   * Setup all mocks for integration testing
+   */
+  setupAllMocks(config?: MockConfig): {
+    apiMocks: {
+      auth: MockAuthAPI;
+      task: MockTaskAPI;
+      category: MockCategoryAPI;
+    };
+    externalMocks: {
+      email: MockEmailService;
+      notification: MockNotificationService;
+    };
+    browserMocks: {
+      browser: MockBrowserAPI;
+      localStorage: MockLocalStorage;
+    };
+    services: ReturnType<typeof MockFactory.createMockServices>;
+  } {
+    // Setup API mocks
+    const authAPI = this.setupAuthAPIMock(config);
+    const taskAPI = this.setupTaskAPIMock(config);
+    const categoryAPI = this.setupCategoryAPIMock(config);
+
+    // Setup external service mocks
+    const emailService = this.setupEmailServiceMock(config);
+    const notificationService = this.setupNotificationServiceMock(config);
+
+    // Setup browser mocks
+    const browserAPI = this.setupBrowserAPIMock(config);
+    const localStorage = this.setupLocalStorageMock(config);
+
+    // Setup domain services
+    const services = MockFactory.createMockServices(config);
+
+    return {
+      apiMocks: {
+        auth: authAPI,
+        task: taskAPI,
+        category: categoryAPI
+      },
+      externalMocks: {
+        email: emailService,
+        notification: notificationService
+      },
+      browserMocks: {
+        browser: browserAPI,
+        localStorage: localStorage
+      },
+      services
+    };
+  }
+
+  /**
+   * Reset all mocks
+   */
+  resetAllMocks(): void {
+    this.apiMocks.clear();
+    this.browserMocks.clear();
+    this.externalMocks.clear();
+    TestDataFactory.clearGeneratedData();
+  }
+
+  /**
+   * Get mock by type and name
+   */
+  getMock(type: 'api' | 'browser' | 'external', name: string): any {
+    switch (type) {
+      case 'api':
+        return this.apiMocks.get(name);
+      case 'browser':
+        return this.browserMocks.get(name);
+      case 'external':
+        return this.externalMocks.get(name);
+      default:
+        return undefined;
+    }
+  }
+}
+
+// ===================================
+// API Mock Implementations
+// ===================================
+
+/**
+ * Mock Auth API for REST endpoint testing
+ */
+export class MockAuthAPI extends BaseMock {
+  private authService: MockAuthService;
+
+  constructor(config?: MockConfig) {
+    super(config);
+    this.authService = new MockAuthService(config);
+  }
+
+  /**
+   * Mock POST /auth/login
+   */
+  async login(credentials: { email: string; password: string }): Promise<{
+    status: number;
+    data?: AuthResult;
+    error?: string;
+  }> {
+    return this.simulateAsync(async () => {
+      try {
+        const result = await this.authService.authenticate(credentials.email, credentials.password);
+        return {
+          status: 200,
+          data: result
+        };
+      } catch (error) {
+        return {
+          status: 401,
+          error: error instanceof Error ? error.message : 'Authentication failed'
+        };
+      }
+    });
+  }
+
+  /**
+   * Mock POST /auth/register
+   */
+  async register(userData: CreateUserData): Promise<{
+    status: number;
+    data?: AuthResult;
+    error?: string;
+  }> {
+    return this.simulateAsync(async () => {
+      try {
+        const result = await this.authService.register(userData);
+        return {
+          status: 201,
+          data: result
+        };
+      } catch (error) {
+        return {
+          status: 400,
+          error: error instanceof Error ? error.message : 'Registration failed'
+        };
+      }
+    });
+  }
+
+  /**
+   * Mock POST /auth/logout
+   */
+  async logout(token: string): Promise<{
+    status: number;
+    data?: { message: string };
+    error?: string;
+  }> {
+    return this.simulateAsync(() => {
+      if (!token) {
+        return {
+          status: 401,
+          error: 'Token required'
+        };
+      }
+
+      return {
+        status: 200,
+        data: { message: 'Logged out successfully' }
+      };
+    });
+  }
+
+  /**
+   * Mock GET /auth/me
+   */
+  async getCurrentUser(token: string): Promise<{
+    status: number;
+    data?: User;
+    error?: string;
+  }> {
+    return this.simulateAsync(async () => {
+      try {
+        const user = await this.authService.validateToken(token);
+        return {
+          status: 200,
+          data: user
+        };
+      } catch (error) {
+        return {
+          status: 401,
+          error: error instanceof Error ? error.message : 'Invalid token'
+        };
+      }
+    });
+  }
+
+  /**
+   * Mock POST /auth/refresh
+   */
+  async refreshToken(refreshToken: string): Promise<{
+    status: number;
+    data?: TokenPair;
+    error?: string;
+  }> {
+    return this.simulateAsync(async () => {
+      try {
+        const tokens = await this.authService.refreshToken(refreshToken);
+        return {
+          status: 200,
+          data: tokens
+        };
+      } catch (error) {
+        return {
+          status: 401,
+          error: error instanceof Error ? error.message : 'Invalid refresh token'
+        };
+      }
+    });
+  }
+}
+
+/**
+ * Mock Task API for REST endpoint testing
+ */
+export class MockTaskAPI extends BaseMock {
+  private taskService: MockTaskService;
+  private taskRepository: MockTaskRepository;
+
+  constructor(config?: MockConfig) {
+    super(config);
+    this.taskRepository = new MockTaskRepository(config);
+    this.taskService = new MockTaskService(config, this.taskRepository);
+  }
+
+  /**
+   * Mock GET /tasks
+   */
+  async getTasks(userId: string, filters?: TaskFilters): Promise<{
+    status: number;
+    data?: Task[];
+    error?: string;
+  }> {
+    return this.simulateAsync(async () => {
+      try {
+        const tasks = await this.taskService.getTasksByUser(userId, filters);
+        return {
+          status: 200,
+          data: tasks
+        };
+      } catch (error) {
+        return {
+          status: 500,
+          error: error instanceof Error ? error.message : 'Failed to fetch tasks'
+        };
+      }
+    });
+  }
+
+  /**
+   * Mock GET /tasks/:id
+   */
+  async getTask(taskId: string): Promise<{
+    status: number;
+    data?: Task;
+    error?: string;
+  }> {
+    return this.simulateAsync(async () => {
+      try {
+        const task = await this.taskRepository.findById(taskId);
+        if (!task) {
+          return {
+            status: 404,
+            error: 'Task not found'
+          };
+        }
+        return {
+          status: 200,
+          data: task
+        };
+      } catch (error) {
+        return {
+          status: 500,
+          error: error instanceof Error ? error.message : 'Failed to fetch task'
+        };
+      }
+    });
+  }
+
+  /**
+   * Mock POST /tasks
+   */
+  async createTask(taskData: CreateTaskData & { userId: string }): Promise<{
+    status: number;
+    data?: Task;
+    error?: string;
+  }> {
+    return this.simulateAsync(async () => {
+      try {
+        const task = await this.taskService.createTask(taskData.userId, taskData);
+        return {
+          status: 201,
+          data: task
+        };
+      } catch (error) {
+        return {
+          status: 400,
+          error: error instanceof Error ? error.message : 'Failed to create task'
+        };
+      }
+    });
+  }
+
+  /**
+   * Mock PUT /tasks/:id
+   */
+  async updateTask(taskId: string, taskData: UpdateTaskData): Promise<{
+    status: number;
+    data?: Task;
+    error?: string;
+  }> {
+    return this.simulateAsync(async () => {
+      try {
+        const task = await this.taskRepository.update(taskId, taskData);
+        return {
+          status: 200,
+          data: task
+        };
+      } catch (error) {
+        return {
+          status: error instanceof Error && error.message === 'Task not found' ? 404 : 400,
+          error: error instanceof Error ? error.message : 'Failed to update task'
+        };
+      }
+    });
+  }
+
+  /**
+   * Mock DELETE /tasks/:id
+   */
+  async deleteTask(taskId: string): Promise<{
+    status: number;
+    data?: { message: string };
+    error?: string;
+  }> {
+    return this.simulateAsync(async () => {
+      try {
+        await this.taskRepository.delete(taskId);
+        return {
+          status: 200,
+          data: { message: 'Task deleted successfully' }
+        };
+      } catch (error) {
+        return {
+          status: error instanceof Error && error.message === 'Task not found' ? 404 : 500,
+          error: error instanceof Error ? error.message : 'Failed to delete task'
+        };
+      }
+    });
+  }
+
+  /**
+   * Mock PATCH /tasks/:id/complete
+   */
+  async completeTask(taskId: string): Promise<{
+    status: number;
+    data?: Task;
+    error?: string;
+  }> {
+    return this.simulateAsync(async () => {
+      try {
+        const task = await this.taskRepository.update(taskId, {
+          status: TaskStatus.completed
+        } as UpdateTaskData);
+        return {
+          status: 200,
+          data: task
+        };
+      } catch (error) {
+        return {
+          status: error instanceof Error && error.message === 'Task not found' ? 404 : 400,
+          error: error instanceof Error ? error.message : 'Failed to complete task'
+        };
+      }
+    });
+  }
+}
+
+/**
+ * Mock Category API for REST endpoint testing
+ */
+export class MockCategoryAPI extends BaseMock {
+  private categoryService: MockCategoryService;
+
+  constructor(config?: MockConfig) {
+    super(config);
+    this.categoryService = new MockCategoryService(config);
+  }
+
+  /**
+   * Mock GET /categories
+   */
+  async getCategories(): Promise<{
+    status: number;
+    data?: Category[];
+    error?: string;
+  }> {
+    return this.simulateAsync(async () => {
+      try {
+        const categories = await this.categoryService.getAllCategories();
+        return {
+          status: 200,
+          data: categories
+        };
+      } catch (error) {
+        return {
+          status: 500,
+          error: error instanceof Error ? error.message : 'Failed to fetch categories'
+        };
+      }
+    });
+  }
+
+  /**
+   * Mock POST /categories
+   */
+  async createCategory(categoryData: CreateCategoryData): Promise<{
+    status: number;
+    data?: Category;
+    error?: string;
+  }> {
+    return this.simulateAsync(async () => {
+      try {
+        const category = await this.categoryService.createCategory(categoryData);
+        return {
+          status: 201,
+          data: category
+        };
+      } catch (error) {
+        return {
+          status: 400,
+          error: error instanceof Error ? error.message : 'Failed to create category'
+        };
+      }
+    });
+  }
+
+  /**
+   * Mock PUT /categories/:id
+   */
+  async updateCategory(categoryId: string, categoryData: UpdateCategoryData): Promise<{
+    status: number;
+    data?: Category;
+    error?: string;
+  }> {
+    return this.simulateAsync(async () => {
+      try {
+        const category = await this.categoryService.updateCategory(categoryId, categoryData);
+        return {
+          status: 200,
+          data: category
+        };
+      } catch (error) {
+        return {
+          status: error instanceof Error && error.message === 'Category not found' ? 404 : 400,
+          error: error instanceof Error ? error.message : 'Failed to update category'
+        };
+      }
+    });
+  }
+
+  /**
+   * Mock DELETE /categories/:id
+   */
+  async deleteCategory(categoryId: string): Promise<{
+    status: number;
+    data?: { message: string };
+    error?: string;
+  }> {
+    return this.simulateAsync(async () => {
+      try {
+        await this.categoryService.deleteCategory(categoryId);
+        return {
+          status: 200,
+          data: { message: 'Category deleted successfully' }
+        };
+      } catch (error) {
+        return {
+          status: error instanceof Error && error.message === 'Category not found' ? 404 : 500,
+          error: error instanceof Error ? error.message : 'Failed to delete category'
+        };
+      }
+    });
+  }
+}
+
+// ===================================
+// Browser API Mock Implementations
+// ===================================
+
+/**
+ * Mock Browser API for browser environment testing
+ */
+export class MockBrowserAPI extends BaseMock {
+  private mockWindow: any = {};
+  private mockDocument: any = {};
+  private mockNavigator: any = {};
+
+  constructor(config?: MockConfig) {
+    super(config);
+    this.setupMockBrowserAPIs();
+  }
+
+  /**
+   * Setup mock browser APIs
+   */
+  private setupMockBrowserAPIs(): void {
+    this.mockWindow = {
+      location: {
+        href: 'http://localhost:3000',
+        origin: 'http://localhost:3000',
+        pathname: '/',
+        search: '',
+        hash: ''
+      },
+      history: {
+        pushState: jest.fn(),
+        replaceState: jest.fn(),
+        back: jest.fn(),
+        forward: jest.fn()
+      },
+      alert: jest.fn(),
+      confirm: jest.fn(() => true),
+      prompt: jest.fn(() => 'mock-input')
+    };
+
+    this.mockDocument = {
+      title: 'Mock Document',
+      cookie: '',
+      getElementById: jest.fn(),
+      querySelector: jest.fn(),
+      querySelectorAll: jest.fn(() => []),
+      createElement: jest.fn(() => ({})),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn()
+    };
+
+    this.mockNavigator = {
+      userAgent: 'MockBrowser/1.0',
+      language: 'en-US',
+      onLine: true,
+      cookieEnabled: true
+    };
+  }
+
+  /**
+   * Get mock window object
+   */
+  getWindow(): any {
+    return this.mockWindow;
+  }
+
+  /**
+   * Get mock document object
+   */
+  getDocument(): any {
+    return this.mockDocument;
+  }
+
+  /**
+   * Get mock navigator object
+   */
+  getNavigator(): any {
+    return this.mockNavigator;
+  }
+
+  /**
+   * Mock window.location navigation
+   */
+  navigate(url: string): void {
+    this.mockWindow.location.href = url;
+    const urlObj = new URL(url);
+    this.mockWindow.location.origin = urlObj.origin;
+    this.mockWindow.location.pathname = urlObj.pathname;
+    this.mockWindow.location.search = urlObj.search;
+    this.mockWindow.location.hash = urlObj.hash;
+  }
+
+  /**
+   * Reset all mocks
+   */
+  reset(): void {
+    this.setupMockBrowserAPIs();
+  }
+}
+
+/**
+ * Mock LocalStorage for browser storage testing
+ */
+export class MockLocalStorage extends BaseMock {
+  private storage: Map<string, string> = new Map();
+
+  constructor(config?: MockConfig) {
+    super(config);
+  }
+
+  /**
+   * Get item from storage
+   */
+  getItem(key: string): string | null {
+    return this.storage.get(key) || null;
+  }
+
+  /**
+   * Set item in storage
+   */
+  setItem(key: string, value: string): void {
+    this.storage.set(key, value);
+  }
+
+  /**
+   * Remove item from storage
+   */
+  removeItem(key: string): void {
+    this.storage.delete(key);
+  }
+
+  /**
+   * Clear all storage
+   */
+  clear(): void {
+    this.storage.clear();
+  }
+
+  /**
+   * Get storage length
+   */
+  get length(): number {
+    return this.storage.size;
+  }
+
+  /**
+   * Get key by index
+   */
+  key(index: number): string | null {
+    const keys = Array.from(this.storage.keys());
+    return keys[index] || null;
+  }
+
+  /**
+   * Get all stored data
+   */
+  getAllData(): Record<string, string> {
+    const data: Record<string, string> = {};
+    for (const [key, value] of this.storage) {
+      data[key] = value;
+    }
+    return data;
+  }
+
+  /**
+   * Reset storage
+   */
+  reset(): void {
+    this.storage.clear();
+  }
+}
+
 // Default export
 export default MockFactory;
+
+// Global instance for easy access
+export const mockServices = MockServices.getInstance();
