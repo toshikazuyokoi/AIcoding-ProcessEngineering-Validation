@@ -90,11 +90,12 @@
     "preset": "ts-jest",
     "testEnvironment": "jsdom",
     "roots": [
-      "<rootDir>/src"
+      "<rootDir>/src",
+      "<rootDir>/tests"
     ],
     "testMatch": [
-      "**/__tests__/**/*.test.{ts,tsx}",
-      "**/*.test.{ts,tsx}"
+      "**/__tests__/**/*.test.{ts,tsx,js,jsx}",
+      "**/*.test.{ts,tsx,js,jsx}"
     ],
     "setupFilesAfterEnv": [
       "<rootDir>/src/setupTests.ts"
