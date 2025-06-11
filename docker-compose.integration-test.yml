@@ -56,7 +56,7 @@ services:
       - "5434:5432" # Dedicated port for integration tests
     volumes:
       - postgres_integration_data:/var/lib/postgresql/data
-      - ./tests/support/database/init-integration.sql:/docker-entrypoint-initdb.d/init-integration.sql:ro
+      - ./tests/support/database:/docker-entrypoint-initdb.d:ro
     networks:
       integration-test-network:
         ipv4_address: 172.22.0.10
