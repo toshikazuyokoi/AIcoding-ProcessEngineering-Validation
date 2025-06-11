@@ -171,50 +171,10 @@ expect.extend({
 // ===================================
 
 /**
- * Common test data factories
+ * Import TestDataFactory from mock-services for consistency
+ * This provides type-safe test data generation across all tests
  */
-export const TestDataFactory = {
-  /**
-   * Create a mock user object
-   */
-  createMockUser: (overrides: any = {}) => ({
-    id: 'user-123',
-    email: 'test@example.com',
-    name: 'Test User',
-    createdAt: new Date('2025-01-01T00:00:00Z'),
-    updatedAt: new Date('2025-01-01T00:00:00Z'),
-    ...overrides
-  }),
-
-  /**
-   * Create a mock task object
-   */
-  createMockTask: (overrides: any = {}) => ({
-    id: 'task-123',
-    userId: 'user-123',
-    title: 'Test Task',
-    description: 'Test task description',
-    priority: 'medium',
-    status: 'pending',
-    dueDate: new Date('2025-12-31T23:59:59Z'),
-    completedAt: null,
-    createdAt: new Date('2025-01-01T00:00:00Z'),
-    updatedAt: new Date('2025-01-01T00:00:00Z'),
-    ...overrides
-  }),
-
-  /**
-   * Create a mock category object
-   */
-  createMockCategory: (overrides: any = {}) => ({
-    id: 'cat-123',
-    name: 'Test Category',
-    color: '#FF0000',
-    description: 'Test category description',
-    createdAt: new Date('2025-01-01T00:00:00Z'),
-    ...overrides
-  })
-};
+export { TestDataFactory } from '../tests/mocks/mock-services';
 
 // ===================================
 // Test Cleanup
