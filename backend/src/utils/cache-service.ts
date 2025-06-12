@@ -414,6 +414,27 @@ export class CacheService {
   }
 
   /**
+   * Get keys by pattern
+   */
+  public async keys(pattern: string = '*'): Promise<string[]> {
+    try {
+      if (!(await this.isConnected())) {
+        this.logger.warn('Redis not connected, keys operation failed', { pattern });
+        return [];
+      }
+
+      const normalizedPattern = `${this.config.keyPrefix}${pattern}`;
+      const keys = await this.redis.keys(normalizedPattern);
+
+      // Remove prefix from keys for consistent API
+      return keys.map(key => key.replace(this.config.keyPrefix, ''));
+    } catch (error) {
+      this.logger.error('Keys operation failed', error as Error, { pattern });
+      return [];
+    }
+  }
+
+  /**
    * Invalidate cache by pattern
    */
   public async invalidatePattern(pattern: string): Promise<number> {
