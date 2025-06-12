@@ -182,6 +182,45 @@ export class LoginPage extends BasePage {
   // ===================================
 
   /**
+   * Fill login form with credentials (for E2E testing)
+   */
+  async fillLoginForm(email: string, password: string): Promise<UIInteractionResult> {
+    console.log(`📝 Filling login form for: ${email}`);
+
+    try {
+      // Enter email
+      const emailResult = await this.enterEmail(email);
+      if (!emailResult.success) {
+        throw new Error(`Failed to enter email: ${emailResult.error}`);
+      }
+
+      // Enter password
+      const passwordResult = await this.enterPassword(password);
+      if (!passwordResult.success) {
+        throw new Error(`Failed to enter password: ${passwordResult.error}`);
+      }
+
+      return {
+        success: true,
+        duration: (emailResult.duration || 0) + (passwordResult.duration || 0)
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: (error as Error).message
+      };
+    }
+  }
+
+  /**
+   * Submit login form (for E2E testing)
+   */
+  async submitLogin(): Promise<UIInteractionResult> {
+    console.log('🚀 Submitting login form');
+    return await this.clickLoginButton();
+  }
+
+  /**
    * Perform complete login with credentials
    */
   async login(credentials: LoginCredentials, options: {
