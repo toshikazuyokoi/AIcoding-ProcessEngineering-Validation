@@ -18,6 +18,10 @@ import Dashboard from './components/dashboard/dashboard';
 import AuthForm from './components/auth/auth-form';
 import TaskList from './components/tasks/task-list';
 import TaskForm from './components/tasks/task-form';
+import TaskDetail from './components/tasks/task-detail';
+import UserProfile from './components/user/user-profile';
+import SearchBar from './components/search/search-bar';
+import FilterPanel from './components/filter/filter-panel';
 
 // ===================================
 // App Types and Interfaces
@@ -299,23 +303,63 @@ const LoginPage: React.FC = () => (
   </div>
 );
 
-const TasksPage: React.FC = () => (
-  <div className="page page--tasks" data-testid="tasks-page">
-    <TaskList />
-  </div>
-);
+const TasksPage: React.FC = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterCriteria, setFilterCriteria] = useState({});
+
+  const handleSearch = useCallback((query: string) => {
+    setSearchQuery(query);
+  }, []);
+
+  const handleFiltersChange = useCallback((filters: any) => {
+    setFilterCriteria(filters);
+  }, []);
+
+  // Combine search and filter criteria for TaskList
+  const combinedFilters = useMemo(() => ({
+    search: searchQuery || undefined,
+    ...filterCriteria
+  }), [searchQuery, filterCriteria]);
+
+  return (
+    <div className="page page--tasks" data-testid="tasks-page">
+      <div className="tasks-page__header">
+        <h1 className="tasks-page__title">Tasks</h1>
+        <SearchBar
+          onSearch={handleSearch}
+          placeholder="Search tasks..."
+          className="tasks-page__search"
+        />
+      </div>
+
+      <div className="tasks-page__content">
+        <div className="tasks-page__sidebar">
+          <FilterPanel
+            onFiltersChange={handleFiltersChange}
+            className="tasks-page__filters"
+          />
+        </div>
+
+        <div className="tasks-page__main">
+          <TaskList
+            initialFilters={combinedFilters}
+            config={{ showFilters: false, showSearch: false }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const TaskDetailPage: React.FC = () => (
   <div className="page page--task-detail" data-testid="task-detail-page">
-    <h1>Task Detail Page</h1>
-    <p>Task detail functionality will be implemented here.</p>
+    <TaskDetail />
   </div>
 );
 
 const ProfilePage: React.FC = () => (
   <div className="page page--profile" data-testid="profile-page">
-    <h1>Profile Page</h1>
-    <p>Profile functionality will be implemented here.</p>
+    <UserProfile />
   </div>
 );
 
