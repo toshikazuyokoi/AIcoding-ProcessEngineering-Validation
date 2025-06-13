@@ -15,6 +15,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 // Import components
 import Layout from './components/layout/layout';
 import Dashboard from './components/dashboard/dashboard';
+import AuthForm from './components/auth/auth-form';
+import TaskList from './components/tasks/task-list';
+import TaskForm from './components/tasks/task-form';
 
 // ===================================
 // App Types and Interfaces
@@ -139,7 +142,7 @@ interface AuthProviderProps {
   enableAuth: boolean;
 }
 
-const AuthProvider: React.FC<AuthProviderProps> = ({ children, enableAuth }) => {
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children, enableAuth }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -292,15 +295,13 @@ const PublicRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
 const LoginPage: React.FC = () => (
   <div className="page page--login" data-testid="login-page">
-    <h1>Login Page</h1>
-    <p>Login functionality will be implemented here.</p>
+    <AuthForm mode="login" />
   </div>
 );
 
 const TasksPage: React.FC = () => (
   <div className="page page--tasks" data-testid="tasks-page">
-    <h1>Tasks Page</h1>
-    <p>Task list functionality will be implemented here.</p>
+    <TaskList />
   </div>
 );
 
@@ -329,13 +330,21 @@ const NotFoundPage: React.FC = () => (
 // App Routes Component
 // ===================================
 
-const AppRoutes: React.FC = () => {
+export const AppRoutes: React.FC = () => {
   return (
     <Routes>
         {/* Public Routes */}
         <Route path="/login" element={
           <PublicRoute>
             <LoginPage />
+          </PublicRoute>
+        } />
+
+        <Route path="/register" element={
+          <PublicRoute>
+            <div className="page page--register" data-testid="register-page">
+              <AuthForm mode="register" />
+            </div>
           </PublicRoute>
         } />
 
@@ -368,6 +377,26 @@ const AppRoutes: React.FC = () => {
           <ProtectedRoute>
             <Layout>
               <ProfilePage />
+            </Layout>
+          </ProtectedRoute>
+        } />
+
+        <Route path="/tasks/new" element={
+          <ProtectedRoute>
+            <Layout>
+              <div className="page page--task-create" data-testid="task-create-page">
+                <TaskForm mode="create" onSubmit={async () => {}} onCancel={() => {}} />
+              </div>
+            </Layout>
+          </ProtectedRoute>
+        } />
+
+        <Route path="/tasks/:id/edit" element={
+          <ProtectedRoute>
+            <Layout>
+              <div className="page page--task-edit" data-testid="task-edit-page">
+                <TaskForm mode="edit" onSubmit={async () => {}} onCancel={() => {}} />
+              </div>
             </Layout>
           </ProtectedRoute>
         } />

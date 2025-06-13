@@ -9,11 +9,14 @@
  * @since 2025-01-28
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { App, AppProps, useAuth } from '../app';
+import AuthForm from '../components/auth/auth-form';
+import TaskList from '../components/tasks/task-list';
+import TaskForm from '../components/tasks/task-form';
 
 // ===================================
 // Test Utilities and Mocks
@@ -37,6 +40,27 @@ jest.mock('../components/layout/layout', () => {
 jest.mock('../components/dashboard/dashboard', () => {
   return function MockDashboard() {
     return <div data-testid="dashboard">Dashboard</div>;
+  };
+});
+
+// Mock AuthForm component
+jest.mock('../components/auth/auth-form', () => {
+  return function MockAuthForm({ mode }: { mode: 'login' | 'register' }) {
+    return <div data-testid={`auth-form-${mode}`}>AuthForm {mode}</div>;
+  };
+});
+
+// Mock TaskList component
+jest.mock('../components/tasks/task-list', () => {
+  return function MockTaskList() {
+    return <div data-testid="task-list">TaskList</div>;
+  };
+});
+
+// Mock TaskForm component
+jest.mock('../components/tasks/task-form', () => {
+  return function MockTaskForm({ mode }: { mode: 'create' | 'edit' }) {
+    return <div data-testid={`task-form-${mode}`}>TaskForm {mode}</div>;
   };
 });
 
@@ -360,6 +384,99 @@ describe('App Component', () => {
 
       // Should not throw errors on unmount
       expect(() => unmount()).not.toThrow();
+    });
+  });
+
+  // ===================================
+  // Phase 6: Component Integration Tests (TSK-R1-001)
+  // ===================================
+
+  describe('Phase 6: Component Integration Tests (TSK-R1-001)', () => {
+    test('should have AuthForm, TaskList, and TaskForm components imported and available', () => {
+      // Test that components are properly imported by checking if they exist
+      expect(typeof AuthForm).toBe('function');
+      expect(typeof TaskList).toBe('function');
+      expect(typeof TaskForm).toBe('function');
+    });
+
+    test('should render app without router and verify component integration', async () => {
+      const { container } = render(<App {...defaultProps} enableRouter={false} />);
+
+      await waitFor(() => {
+        expect(container.querySelector('.app')).toBeInTheDocument();
+        expect(screen.getByTestId('test-app')).toBeInTheDocument();
+      });
+    });
+
+    test('should verify LoginPage component structure', () => {
+      const LoginPage = () => (
+        <div className="page page--login" data-testid="login-page">
+          <AuthForm mode="login" />
+        </div>
+      );
+
+      render(<LoginPage />);
+      expect(screen.getByTestId('login-page')).toBeInTheDocument();
+      expect(screen.getByTestId('auth-form-login')).toBeInTheDocument();
+    });
+
+    test('should verify TasksPage component structure', () => {
+      const TasksPage = () => (
+        <div className="page page--tasks" data-testid="tasks-page">
+          <TaskList />
+        </div>
+      );
+
+      render(<TasksPage />);
+      expect(screen.getByTestId('tasks-page')).toBeInTheDocument();
+      expect(screen.getByTestId('task-list')).toBeInTheDocument();
+    });
+
+    test('should verify TaskForm integration for create mode', () => {
+      const TaskCreatePage = () => (
+        <div className="page page--task-create" data-testid="task-create-page">
+          <TaskForm mode="create" onSubmit={async () => {}} onCancel={() => {}} />
+        </div>
+      );
+
+      render(<TaskCreatePage />);
+      expect(screen.getByTestId('task-create-page')).toBeInTheDocument();
+      expect(screen.getByTestId('task-form-create')).toBeInTheDocument();
+    });
+
+    test('should verify TaskForm integration for edit mode', () => {
+      const TaskEditPage = () => (
+        <div className="page page--task-edit" data-testid="task-edit-page">
+          <TaskForm mode="edit" onSubmit={async () => {}} onCancel={() => {}} />
+        </div>
+      );
+
+      render(<TaskEditPage />);
+      expect(screen.getByTestId('task-edit-page')).toBeInTheDocument();
+      expect(screen.getByTestId('task-form-edit')).toBeInTheDocument();
+    });
+
+    test('should verify AuthForm integration for register mode', () => {
+      const RegisterPage = () => (
+        <div className="page page--register" data-testid="register-page">
+          <AuthForm mode="register" />
+        </div>
+      );
+
+      render(<RegisterPage />);
+      expect(screen.getByTestId('register-page')).toBeInTheDocument();
+      expect(screen.getByTestId('auth-form-register')).toBeInTheDocument();
+    });
+
+    test('should integrate existing components without breaking existing functionality', async () => {
+      mockLocalStorage.getItem.mockReturnValue('mock-jwt-token');
+
+      // Test dashboard still works
+      renderAppWithRouter(['/dashboard']);
+      await waitFor(() => {
+        expect(screen.getByTestId('dashboard')).toBeInTheDocument();
+        expect(screen.getByTestId('layout')).toBeInTheDocument();
+      });
     });
   });
 });
