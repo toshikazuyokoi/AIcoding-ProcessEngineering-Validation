@@ -3,9 +3,16 @@
 ## メタデータ
 | 項目 | 内容 |
 |------|------|
-| ドキュメントID | IF-001 |
-| 関連文書 | CLASS-001 |
-| 作成日 | YYYY-MM-DD |
+| ドキュメントID | [STEP3-IF-001] |
+| バージョン | [v1.0] |
+| 作成日 | [YYYY-MM-DD] |
+| 最終更新日 | [YYYY-MM-DD] |
+| ステータス | [ドラフト/レビュー中/承認済み/非推奨] |
+| 作成者 | [作成者名] |
+| 承認者 | [承認者名（ステータスが承認済みの場合）] |
+| タグ | #step3-detailed-design #interfaces #api-design |
+| 関連文書 | [[CLASS-001](./step3-class-design-template.md)] [[ARCH-001](./step2-system-architecture-template.md)] |
+| 変更履歴 | [v1.0] YYYY-MM-DD: 初版作成<br>[v1.1] YYYY-MM-DD: インターフェース追加（IF-003, IF-004） |
 
 ## 1. インターフェース一覧
 

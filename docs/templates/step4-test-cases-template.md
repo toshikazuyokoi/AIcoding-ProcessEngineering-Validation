@@ -3,9 +3,16 @@
 ## メタデータ
 | 項目 | 内容 |
 |------|------|
-| ドキュメントID | CASE-001 |
-| 関連文書 | TARGET-001 |
-| 作成日 | YYYY-MM-DD |
+| ドキュメントID | [STEP4-CASE-001] |
+| バージョン | [v1.0] |
+| 作成日 | [YYYY-MM-DD] |
+| 最終更新日 | [YYYY-MM-DD] |
+| ステータス | [ドラフト/レビュー中/承認済み/非推奨] |
+| 作成者 | [作成者名] |
+| 承認者 | [承認者名（ステータスが承認済みの場合）] |
+| タグ | #step4-test-design #test-cases #quality-assurance |
+| 関連文書 | [[TARGET-001](./step4-test-targets-template.md)] [[STRATEGY-001](./step4-test-strategy-template.md)] |
+| 変更履歴 | [v1.0] YYYY-MM-DD: 初版作成<br>[v1.1] YYYY-MM-DD: E2Eテストケース追加（TC-201〜TC-205） |
 
 ## 1. 単体テストケース
 

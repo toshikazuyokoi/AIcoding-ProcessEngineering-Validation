@@ -3,9 +3,16 @@
 ## メタデータ
 | 項目 | 内容 |
 |------|------|
-| ドキュメントID | TEST-001 |
-| 関連文書 | REQ-001, CLASS-001 |
-| 作成日 | YYYY-MM-DD |
+| ドキュメントID | [STEP4-STRATEGY-001] |
+| バージョン | [v1.0] |
+| 作成日 | [YYYY-MM-DD] |
+| 最終更新日 | [YYYY-MM-DD] |
+| ステータス | [ドラフト/レビュー中/承認済み/非推奨] |
+| 作成者 | [作成者名] |
+| 承認者 | [承認者名（ステータスが承認済みの場合）] |
+| タグ | #step4-test-design #test-strategy #quality-assurance |
+| 関連文書 | [[REQ-001](./step1-requirements-specification-template.md)] [[CLASS-001](./step3-class-design-template.md)] |
+| 変更履歴 | [v1.0] YYYY-MM-DD: 初版作成<br>[v1.1] YYYY-MM-DD: 品質基準の更新（カバレッジ目標値の見直し） |
 
 ## 1. テスト方針
 
