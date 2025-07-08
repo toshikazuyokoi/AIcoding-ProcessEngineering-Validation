@@ -1,0 +1,225 @@
+# プロセスエンジニアリング理論インデックス
+# 各理論要素の属性と適用性を定義
+
+theories:
+# 核心理論 (Core)
+- id: "process-essence"
+  path: "core/process-essence.md"
+  category: "core"
+  priority: 1
+  estimated_tokens: 300
+  dependencies: []
+  applicability:
+    project_size: [ "small", "medium", "large" ]
+    complexity: [ "low", "medium", "high" ]
+    phases: [ "all" ]
+    task_types: [ "all" ]
+  usage_frequency: 0.95
+  effectiveness_score: 0.92
+  last_updated: "2025-06-28"
+  description: "プロセスエンジニアリングの基本フローと核心原則"
+
+- id: "quality-principles"
+  path: "core/quality-principles.md"
+  category: "core"
+  priority: 1
+  estimated_tokens: 400
+  dependencies: [ "process-essence" ]
+  applicability:
+    project_size: [ "small", "medium", "large" ]
+    complexity: [ "low", "medium", "high" ]
+    phases: [ "all" ]
+    task_types: [ "all" ]
+  usage_frequency: 0.90
+  effectiveness_score: 0.89
+  last_updated: "2025-06-28"
+  description: "4つの品質ゲートとリスクベース品質管理"
+
+- id: "task-fundamentals"
+  path: "core/task-fundamentals.md"
+  category: "core"
+  priority: 1
+  estimated_tokens: 300
+  dependencies: [ "process-essence" ]
+  applicability:
+    project_size: [ "small", "medium", "large" ]
+    complexity: [ "low", "medium", "high" ]
+    phases: [ "all" ]
+    task_types: [ "all" ]
+  usage_frequency: 0.88
+  effectiveness_score: 0.85
+  last_updated: "2025-06-28"
+  description: "カテゴリ単位管理と選択的展開の基本原則"
+
+# 実装ガイド (Guides)
+- id: "scale-detection"
+  path: "guides/scale-detection.md"
+  category: "guide"
+  priority: 2
+  estimated_tokens: 800
+  dependencies: [ "task-fundamentals" ]
+  applicability:
+    project_size: [ "small", "medium", "large" ]
+    complexity: [ "medium", "high" ]
+    phases: [ "step_0", "step_1" ]
+    task_types: [ "project_analysis", "planning" ]
+  usage_frequency: 0.75
+  effectiveness_score: 0.82
+  last_updated: "2025-06-28"
+  description: "プロジェクト規模判定と複雑度評価の詳細手法"
+
+- id: "category-design"
+  path: "guides/category-design.md"
+  category: "guide"
+  priority: 2
+  estimated_tokens: 1000
+  dependencies: [ "scale-detection", "task-fundamentals" ]
+  applicability:
+    project_size: [ "medium", "large" ]
+    complexity: [ "medium", "high" ]
+    phases: [ "step_2", "step_3", "step_5" ]
+    task_types: [ "architecture_design", "planning" ]
+  usage_frequency: 0.70
+  effectiveness_score: 0.78
+  last_updated: "2025-06-28"
+  description: "規模別カテゴリ設計パターンと並列開発計画"
+
+- id: "selective-expansion"
+  path: "guides/selective-expansion.md"
+  category: "guide"
+  priority: 2
+  estimated_tokens: 700
+  dependencies: [ "task-fundamentals" ]
+  applicability:
+    project_size: [ "medium", "large" ]
+    complexity: [ "medium", "high" ]
+    phases: [ "step_6", "step_7" ]
+    task_types: [ "implementation", "code_analysis" ]
+  usage_frequency: 0.65
+  effectiveness_score: 0.75
+  last_updated: "2025-06-28"
+  description: "展開レベル判定とファイルタイプ別展開方針"
+
+- id: "progress-management"
+  path: "guides/progress-management.md"
+  category: "guide"
+  priority: 2
+  estimated_tokens: 500
+  dependencies: [ "task-fundamentals" ]
+  applicability:
+    project_size: [ "medium", "large" ]
+    complexity: [ "medium", "high" ]
+    phases: [ "step_5", "step_6", "step_7", "step_8" ]
+    task_types: [ "project_management", "monitoring" ]
+  usage_frequency: 0.60
+  effectiveness_score: 0.72
+  last_updated: "2025-06-28"
+  description: "進捗可視化と品質指標監視の手法"
+
+# カテゴリ別インデックス
+categories:
+  core:
+    description: "必須の核心理論 (常時ロード)"
+    total_tokens: 1000
+    theories: [ "process-essence", "quality-principles", "task-fundamentals" ]
+
+  guide:
+    description: "条件付き実装ガイド"
+    total_tokens: 3000
+    theories: [ "scale-detection", "category-design", "selective-expansion", "progress-management" ]
+
+  detailed:
+    description: "オンデマンド詳細仕様"
+    total_tokens: 10000
+    theories: [] # 詳細仕様は別途定義
+
+# 適用性インデックス
+applicability_index:
+  by_project_size:
+    small:
+      required: [ "process-essence", "quality-principles", "task-fundamentals" ]
+      optional: []
+
+    medium:
+      required: [ "process-essence", "quality-principles", "task-fundamentals" ]
+      recommended: [ "scale-detection", "category-design" ]
+      optional: [ "selective-expansion", "progress-management" ]
+
+    large:
+      required: [ "process-essence", "quality-principles", "task-fundamentals" ]
+      recommended: [ "scale-detection", "category-design", "selective-expansion", "progress-management" ]
+      optional: []
+
+  by_complexity:
+    low:
+      required: [ "process-essence", "task-fundamentals" ]
+      optional: [ "quality-principles" ]
+
+    medium:
+      required: [ "process-essence", "quality-principles", "task-fundamentals" ]
+      recommended: [ "scale-detection" ]
+      optional: [ "category-design", "selective-expansion" ]
+
+    high:
+      required: [ "process-essence", "quality-principles", "task-fundamentals" ]
+      recommended: [ "scale-detection", "category-design", "selective-expansion", "progress-management" ]
+      optional: []
+
+  by_phase:
+    step_0_goal_definition:
+      theories: [ "process-essence", "quality-principles" ]
+
+    step_1_requirements:
+      theories: [ "process-essence", "quality-principles", "scale-detection" ]
+
+    step_2_system_design:
+      theories: [ "process-essence", "quality-principles", "category-design" ]
+
+    step_3_detailed_design:
+      theories: [ "process-essence", "quality-principles", "category-design" ]
+
+    step_5_development_planning:
+      theories: [ "task-fundamentals", "category-design", "progress-management" ]
+
+    step_6_task_creation:
+      theories: [ "task-fundamentals", "selective-expansion" ]
+
+    step_7_implementation:
+      theories: [ "quality-principles", "selective-expansion", "progress-management" ]
+
+    step_8_continuous_improvement:
+      theories: [ "process-essence", "progress-management" ]
+
+# 使用統計テンプレート
+usage_statistics:
+  total_loads: 0
+  last_updated: "2025-06-28"
+  theory_usage:
+    process-essence:
+      loads: 0
+      effectiveness_feedback: []
+      avg_effectiveness: 0.0
+    quality-principles:
+      loads: 0
+      effectiveness_feedback: []
+      avg_effectiveness: 0.0
+    task-fundamentals:
+      loads: 0
+      effectiveness_feedback: []
+      avg_effectiveness: 0.0
+    scale-detection:
+      loads: 0
+      effectiveness_feedback: []
+      avg_effectiveness: 0.0
+    category-design:
+      loads: 0
+      effectiveness_feedback: []
+      avg_effectiveness: 0.0
+    selective-expansion:
+      loads: 0
+      effectiveness_feedback: []
+      avg_effectiveness: 0.0
+    progress-management:
+      loads: 0
+      effectiveness_feedback: []
+      avg_effectiveness: 0.0

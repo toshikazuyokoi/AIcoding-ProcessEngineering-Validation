@@ -1,0 +1,180 @@
+# 理論要素間の依存関係マップ
+# 理論の読み込み順序と依存関係を定義
+
+dependencies:
+# 核心理論の依存関係
+- from: "quality-principles"
+  to: "process-essence"
+  type: "requires"
+  description: "品質ゲートはプロセスフローの理解が前提"
+
+- from: "task-fundamentals"
+  to: "process-essence"
+  type: "requires"
+  description: "タスク管理はプロセス基本フローの理解が前提"
+
+# 実装ガイドの依存関係
+- from: "scale-detection"
+  to: "task-fundamentals"
+  type: "requires"
+  description: "規模判定はタスク管理原則の理解が前提"
+
+- from: "category-design"
+  to: "scale-detection"
+  type: "requires"
+  description: "カテゴリ設計は規模判定結果に基づく"
+
+- from: "category-design"
+  to: "task-fundamentals"
+  type: "requires"
+  description: "カテゴリ設計はタスク管理原則の理解が前提"
+
+- from: "selective-expansion"
+  to: "task-fundamentals"
+  type: "requires"
+  description: "選択的展開はタスク管理原則の理解が前提"
+
+- from: "progress-management"
+  to: "task-fundamentals"
+  type: "requires"
+  description: "進捗管理はタスク管理原則の理解が前提"
+
+# 推奨関係 (必須ではないが有用)
+- from: "category-design"
+  to: "quality-principles"
+  type: "recommends"
+  description: "カテゴリ設計時に品質ゲートの考慮が推奨"
+
+- from: "selective-expansion"
+  to: "scale-detection"
+  type: "recommends"
+  description: "展開レベル判定時に規模情報が有用"
+
+- from: "progress-management"
+  to: "quality-principles"
+  type: "recommends"
+  description: "進捗管理時に品質指標の理解が有用"
+
+# 読み込み順序の定義
+loading_order:
+  # レベル1: 基盤理論 (依存関係なし)
+  level_1:
+  - "process-essence"
+
+  # レベル2: 核心理論 (基盤理論に依存)
+  level_2:
+  - "quality-principles"
+  - "task-fundamentals"
+
+  # レベル3: 基本ガイド (核心理論に依存)
+  level_3:
+  - "scale-detection"
+
+  # レベル4: 高度ガイド (基本ガイドに依存)
+  level_4:
+  - "category-design"
+  - "selective-expansion"
+  - "progress-management"
+
+# 循環依存チェック
+circular_dependencies:
+  status: "none"
+  last_checked: "2025-06-28"
+  violations: []
+
+# 依存関係の強度
+dependency_strength:
+  strong:
+    description: "必須の依存関係 - 前提理論なしでは理解困難"
+    dependencies:
+    - "quality-principles -> process-essence"
+    - "task-fundamentals -> process-essence"
+    - "scale-detection -> task-fundamentals"
+    - "category-design -> scale-detection"
+    - "category-design -> task-fundamentals"
+    - "selective-expansion -> task-fundamentals"
+    - "progress-management -> task-fundamentals"
+
+  medium:
+    description: "推奨の依存関係 - 前提理論があると理解が深まる"
+    dependencies:
+    - "category-design -> quality-principles"
+    - "selective-expansion -> scale-detection"
+    - "progress-management -> quality-principles"
+
+  weak:
+    description: "参考の依存関係 - 前提理論は参考程度"
+    dependencies: []
+
+# 依存関係解決アルゴリズム
+resolution_algorithm:
+  type: "topological_sort"
+  description: "依存関係に基づく位相ソートで読み込み順序を決定"
+
+  steps:
+    1: "依存関係グラフの構築"
+    2: "循環依存の検出と排除"
+    3: "位相ソートによる順序決定"
+    4: "強度による優先順位調整"
+
+# 動的依存関係解決
+dynamic_resolution:
+  enabled: true
+  description: "実行時の条件に基づく動的な依存関係解決"
+
+  conditions:
+    project_size:
+      small:
+        skip_dependencies: [ "scale-detection", "category-design" ]
+        reason: "小規模プロジェクトでは詳細な規模判定・カテゴリ設計は不要"
+
+      medium:
+        required_dependencies: [ "scale-detection" ]
+        optional_dependencies: [ "category-design" ]
+
+      large:
+        required_dependencies: [ "scale-detection", "category-design" ]
+
+    complexity:
+      low:
+        skip_dependencies: [ "selective-expansion", "progress-management" ]
+        reason: "低複雑度では高度な管理手法は不要"
+
+      high:
+        required_dependencies: [ "selective-expansion", "progress-management" ]
+
+    phase:
+      early_phases:
+        priority_theories: [ "process-essence", "quality-principles" ]
+
+      design_phases:
+        priority_theories: [ "category-design", "scale-detection" ]
+
+      implementation_phases:
+        priority_theories: [ "selective-expansion", "progress-management" ]
+
+# 依存関係違反の処理
+violation_handling:
+  missing_dependency:
+    action: "auto_load"
+    description: "不足している依存理論を自動的に読み込み"
+
+  circular_dependency:
+    action: "error"
+    description: "循環依存が検出された場合はエラーとして処理"
+
+  version_mismatch:
+    action: "warning"
+    description: "理論のバージョン不整合は警告として処理"
+
+# 依存関係メトリクス
+metrics:
+  total_dependencies: 10
+  strong_dependencies: 7
+  medium_dependencies: 3
+  weak_dependencies: 0
+  max_dependency_depth: 3
+  average_dependency_count: 1.4
+
+  complexity_score: 2.1 # 1.0-5.0 (低-高)
+  maintainability_score: 4.2 # 1.0-5.0 (低-高)

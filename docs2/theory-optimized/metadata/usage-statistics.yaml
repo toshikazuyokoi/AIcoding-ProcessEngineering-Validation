@@ -1,0 +1,309 @@
+# プロセスエンジニアリング理論使用統計
+# 理論要素の使用頻度と効果測定データ
+
+statistics:
+  last_updated: "2025-06-28T09:31:00Z"
+  total_sessions: 0
+  total_theory_loads: 0
+
+  # 全体統計
+  global_metrics:
+    average_session_duration: 0.0 # 分
+    average_theories_per_session: 0.0
+    most_used_theory: null
+    least_used_theory: null
+    overall_effectiveness: 0.0 # 1.0-5.0
+
+# 理論別使用統計
+theory_usage:
+  process-essence:
+    loads: 0
+    total_usage_time: 0 # 秒
+    effectiveness_feedback: []
+    avg_effectiveness: 0.0
+    success_rate: 0.0 # タスク成功率
+    user_ratings: []
+    common_contexts: []
+
+  quality-principles:
+    loads: 0
+    total_usage_time: 0
+    effectiveness_feedback: []
+    avg_effectiveness: 0.0
+    success_rate: 0.0
+    user_ratings: []
+    common_contexts: []
+
+  task-fundamentals:
+    loads: 0
+    total_usage_time: 0
+    effectiveness_feedback: []
+    avg_effectiveness: 0.0
+    success_rate: 0.0
+    user_ratings: []
+    common_contexts: []
+
+  scale-detection:
+    loads: 0
+    total_usage_time: 0
+    effectiveness_feedback: []
+    avg_effectiveness: 0.0
+    success_rate: 0.0
+    user_ratings: []
+    common_contexts: []
+
+  category-design:
+    loads: 0
+    total_usage_time: 0
+    effectiveness_feedback: []
+    avg_effectiveness: 0.0
+    success_rate: 0.0
+    user_ratings: []
+    common_contexts: []
+
+  selective-expansion:
+    loads: 0
+    total_usage_time: 0
+    effectiveness_feedback: []
+    avg_effectiveness: 0.0
+    success_rate: 0.0
+    user_ratings: []
+    common_contexts: []
+
+  progress-management:
+    loads: 0
+    total_usage_time: 0
+    effectiveness_feedback: []
+    avg_effectiveness: 0.0
+    success_rate: 0.0
+    user_ratings: []
+    common_contexts: []
+
+# コンテキスト別統計
+context_statistics:
+  by_project_size:
+    small:
+      sessions: 0
+      avg_theories_loaded: 0.0
+      success_rate: 0.0
+      preferred_theories: []
+
+    medium:
+      sessions: 0
+      avg_theories_loaded: 0.0
+      success_rate: 0.0
+      preferred_theories: []
+
+    large:
+      sessions: 0
+      avg_theories_loaded: 0.0
+      success_rate: 0.0
+      preferred_theories: []
+
+  by_complexity:
+    low:
+      sessions: 0
+      avg_theories_loaded: 0.0
+      success_rate: 0.0
+      preferred_theories: []
+
+    medium:
+      sessions: 0
+      avg_theories_loaded: 0.0
+      success_rate: 0.0
+      preferred_theories: []
+
+    high:
+      sessions: 0
+      avg_theories_loaded: 0.0
+      success_rate: 0.0
+      preferred_theories: []
+
+  by_phase:
+    step_0_goal_definition:
+      sessions: 0
+      avg_theories_loaded: 0.0
+      success_rate: 0.0
+      preferred_theories: []
+
+    step_1_requirements:
+      sessions: 0
+      avg_theories_loaded: 0.0
+      success_rate: 0.0
+      preferred_theories: []
+
+    step_2_system_design:
+      sessions: 0
+      avg_theories_loaded: 0.0
+      success_rate: 0.0
+      preferred_theories: []
+
+    step_3_detailed_design:
+      sessions: 0
+      avg_theories_loaded: 0.0
+      success_rate: 0.0
+      preferred_theories: []
+
+    step_5_development_planning:
+      sessions: 0
+      avg_theories_loaded: 0.0
+      success_rate: 0.0
+      preferred_theories: []
+
+    step_6_task_creation:
+      sessions: 0
+      avg_theories_loaded: 0.0
+      success_rate: 0.0
+      preferred_theories: []
+
+    step_7_implementation:
+      sessions: 0
+      avg_theories_loaded: 0.0
+      success_rate: 0.0
+      preferred_theories: []
+
+    step_8_continuous_improvement:
+      sessions: 0
+      avg_theories_loaded: 0.0
+      success_rate: 0.0
+      preferred_theories: []
+
+# パフォーマンス統計
+performance_metrics:
+  loading_times:
+    process-essence:
+      avg_load_time: 0.0 # ミリ秒
+      max_load_time: 0.0
+      min_load_time: 0.0
+
+    quality-principles:
+      avg_load_time: 0.0
+      max_load_time: 0.0
+      min_load_time: 0.0
+
+    task-fundamentals:
+      avg_load_time: 0.0
+      max_load_time: 0.0
+      min_load_time: 0.0
+
+    scale-detection:
+      avg_load_time: 0.0
+      max_load_time: 0.0
+      min_load_time: 0.0
+
+    category-design:
+      avg_load_time: 0.0
+      max_load_time: 0.0
+      min_load_time: 0.0
+
+    selective-expansion:
+      avg_load_time: 0.0
+      max_load_time: 0.0
+      min_load_time: 0.0
+
+    progress-management:
+      avg_load_time: 0.0
+      max_load_time: 0.0
+      min_load_time: 0.0
+
+  token_usage:
+    total_tokens_used: 0
+    avg_tokens_per_session: 0.0
+    max_tokens_per_session: 0
+    token_efficiency: 0.0 # 成功率/トークン使用量
+
+# 効果測定
+effectiveness_tracking:
+  # 定量的指標
+  quantitative:
+    development_speed_improvement: 0.0 # %
+    bug_reduction_rate: 0.0 # %
+    code_quality_improvement: 0.0 # %
+    project_success_rate: 0.0 # %
+
+  # 定性的指標
+  qualitative:
+    user_satisfaction: 0.0 # 1.0-5.0
+    ease_of_use: 0.0 # 1.0-5.0
+    theory_clarity: 0.0 # 1.0-5.0
+    practical_value: 0.0 # 1.0-5.0
+
+# 学習・改善データ
+learning_data:
+  # 理論選択の最適化
+  selection_optimization:
+    successful_combinations: []
+    failed_combinations: []
+    context_patterns: []
+
+  # 使用パターン分析
+  usage_patterns:
+    common_sequences: []
+    peak_usage_times: []
+    seasonal_trends: []
+
+  # フィードバック分析
+  feedback_analysis:
+    positive_feedback: []
+    negative_feedback: []
+    improvement_suggestions: []
+
+# A/Bテスト結果
+ab_test_results:
+  current_tests: []
+  completed_tests: []
+  # 例: 理論選択アルゴリズムのテスト
+  # - test_id: "theory_selection_v2"
+  #   start_date: "2025-06-01"
+  #   end_date: "2025-06-30"
+  #   variants:
+  #     control: "current_algorithm"
+  #     treatment: "ml_based_algorithm"
+  #   metrics:
+  #     success_rate:
+  #       control: 0.75
+  #       treatment: 0.82
+  #     user_satisfaction:
+  #       control: 3.8
+  #       treatment: 4.1
+  #   conclusion: "ML-based algorithm shows 9% improvement"
+
+  # 異常検知
+anomaly_detection:
+  enabled: true
+  thresholds:
+    low_usage_threshold: 0.1 # 使用率が10%以下
+    high_failure_threshold: 0.3 # 失敗率が30%以上
+    performance_degradation_threshold: 2.0 # 平均の2倍以上の処理時間
+
+  detected_anomalies: []
+  # 例: 異常検知結果
+  # - timestamp: "2025-06-28T10:00:00Z"
+  #   type: "low_usage"
+  #   theory: "progress-management"
+  #   metric: "usage_rate"
+  #   value: 0.05
+  #   threshold: 0.1
+  #   action_taken: "investigate_user_feedback"
+
+  # レポート生成設定
+reporting:
+  auto_reports:
+    daily: true
+    weekly: true
+    monthly: true
+
+  report_recipients: []
+
+  custom_metrics: []
+
+  export_formats: [ "yaml", "json", "csv" ]
+
+# データ保持ポリシー
+data_retention:
+  raw_data_retention_days: 90
+  aggregated_data_retention_days: 365
+  anonymization_after_days: 30
+
+  backup_frequency: "daily"
+  backup_location: "metadata/backups/"
